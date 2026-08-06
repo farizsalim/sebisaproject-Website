@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import Image from "next/image";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 
@@ -32,11 +32,23 @@ export default function CaseStudySection() {
   const activeCase = caseStudies[activeIndex];
 
   useEffect(() => {
+    if (caseStudies.length < 2) return undefined;
+
+    const caseTimer = window.setInterval(() => {
+      setActiveIndex((currentIndex) => (currentIndex + 1) % caseStudies.length);
+      setMediaOffset(0);
+      setIsDetailsExpanded(false);
+    }, 20000);
+
+    return () => window.clearInterval(caseTimer);
+  }, [caseStudies.length]);
+
+  useEffect(() => {
     if (!activeCase || activeCase.media.length <= 5) return undefined;
 
     const mediaTimer = window.setInterval(() => {
       setMediaOffset((currentOffset) => (currentOffset + 1) % activeCase.media.length);
-    }, 4500);
+    }, 14500);
 
     return () => window.clearInterval(mediaTimer);
   }, [activeCase]);
@@ -126,17 +138,19 @@ export default function CaseStudySection() {
           <p className="py-16 text-[#b18b00]">{error}</p>
         ) : activeCase ? (
           <>
-          <motion.div
-            key={activeCase.id}
-            className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-14"
-            initial={{ opacity: 0, x: 18 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.12}
-            onDragEnd={handleCaseSwipe}
-          >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={activeCase.id}
+              className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-14"
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -24 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.12}
+              onDragEnd={handleCaseSwipe}
+            >
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#17aeb0]">
                 {activeCase.eyebrow}
@@ -276,7 +290,8 @@ export default function CaseStudySection() {
                 </button>
               </div>
             </div>
-          </motion.div>
+            </motion.div>
+          </AnimatePresence>
           </>
         ) : null}
       </div>
