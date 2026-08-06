@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { Fragment } from "react";
+import ScrollLink from "@/components/ScrollLink";
 
 const headingSegments = [
   { text: "Punya", className: "text-white", spaceAfter: true },
@@ -57,24 +58,26 @@ export default function Hero() {
           </motion.h1>
 
           <div className="mt-7 flex min-h-[70px] w-full flex-col items-stretch justify-start gap-3 sm:flex-row sm:items-center sm:justify-center">
-            <motion.a
-              className="inline-flex min-h-[52px] items-center justify-center rounded-sm bg-[#FBCD2F] px-6 py-4 text-base font-bold text-[#00132d] transition hover:bg-white sm:min-w-[190px]"
-              href="#konsultasi"
+            <motion.div
+              className="inline-flex"
               initial={{ opacity: 0, y: 18, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.5, delay: 0.55, ease: "easeOut" }}
             >
-              Ayo Kita Mulai !
-            </motion.a>
-            <motion.a
-              className="inline-flex min-h-[52px] items-center justify-center rounded-sm border border-[#DF00A8] px-6 py-4 text-base font-bold text-white transition hover:bg-[#DF00A8] hover:text-white sm:min-w-[190px]"
-              href="#layanan"
+              <ScrollLink className="inline-flex min-h-[52px] items-center justify-center rounded-sm bg-[#FBCD2F] px-6 py-4 text-base font-bold text-[#00132d] transition hover:bg-white sm:min-w-[190px]" href="#konsultasi">
+                Ayo Kita Mulai !
+              </ScrollLink>
+            </motion.div>
+            <motion.div
+              className="inline-flex"
               initial={{ opacity: 0, y: 18, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.5, delay: 0.65, ease: "easeOut" }}
             >
-              Pilihan layanan
-            </motion.a>
+              <ScrollLink className="inline-flex min-h-[52px] items-center justify-center rounded-sm border border-[#DF00A8] px-6 py-4 text-base font-bold text-white transition hover:bg-[#DF00A8] hover:text-white sm:min-w-[190px]" href="#layanan">
+                Pilihan layanan
+              </ScrollLink>
+            </motion.div>
           </div>
         </div>
       </div>

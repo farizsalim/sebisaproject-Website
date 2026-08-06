@@ -90,9 +90,9 @@ export default function CaseStudySection() {
       <div className="mx-auto max-w-[1240px]">
         <motion.div
           className="mb-5 flex flex-col justify-between gap-3 sm:mb-8 sm:flex-row sm:items-end"
-          initial={false}
+          initial={{ opacity: 0, y: 22 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
+          viewport={{ once: false, amount: 0.25 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <div className="max-w-3xl">
@@ -143,6 +143,8 @@ export default function CaseStudySection() {
               className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-14"
               initial={{ opacity: 0, x: 24 }}
               animate={{ opacity: 1, x: 0 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: false, amount: 0.12 }}
               exit={{ opacity: 0, x: -24 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               drag="x"

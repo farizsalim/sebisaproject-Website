@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "motion/react";
 
 const clientLogos = [
   "kz6ioaghyw3kmkvwz7yk.jpg",
@@ -26,7 +29,13 @@ export default function ClientsSection() {
     >
       <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#17E9E5_0%,#FBCD2F_50%,#DF00A8_100%)]" />
       <div className="mx-auto max-w-[1240px]">
-        <div className="max-w-2xl">
+        <motion.div
+          className="max-w-2xl"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.25 }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+        >
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#00AFC1] sm:text-sm">
             Mitra Sebisa Project
           </p>
@@ -37,13 +46,27 @@ export default function ClientsSection() {
             Setiap logo membawa cerita, kebutuhan, dan tantangan yang kami bantu
             kerjakan bersama.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+        <motion.div
+          className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.12 }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.055 } },
+          }}
+        >
           {clientLogos.map((logo, index) => (
-            <div
+            <motion.div
               key={logo}
               className="group flex h-28 items-center justify-center border border-[#00132d]/10 bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[#17E9E5] hover:shadow-[0_10px_24px_rgba(0,19,45,0.1)] sm:h-32"
+              variants={{
+                hidden: { opacity: 0, y: 18 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
             >
               <Image
                 src={`/Client/${logo}`}
@@ -52,9 +75,9 @@ export default function ClientsSection() {
                 height={140}
                 className="h-full w-full object-contain grayscale opacity-65 transition duration-300 group-hover:grayscale-0 group-hover:opacity-100"
               />
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

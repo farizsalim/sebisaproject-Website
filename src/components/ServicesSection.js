@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa6";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import ScrollLink from "@/components/ScrollLink";
 
 function getServiceIcons(serviceName) {
   const normalizedName = serviceName.toLowerCase();
@@ -83,7 +84,7 @@ export default function ServicesSection() {
           className="max-w-2xl"
           initial={false}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: false, amount: 0.3 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <p id="layanan" className="scroll-mt-[82px] mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#17E9E5] sm:scroll-mt-[102px]">
@@ -176,7 +177,7 @@ export default function ServicesSection() {
                       initial={false}
                       whileInView={{ opacity: 1, y: 0 }}
                       whileHover={{ y: -4 }}
-                      viewport={{ once: true, amount: 0.15 }}
+                      viewport={{ once: false, amount: 0.15 }}
                       transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
                     >
                       <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#17E9E5]/10 transition-transform duration-500 group-hover:scale-150" />
@@ -214,12 +215,12 @@ export default function ServicesSection() {
         )}
 
         <div className="mt-14 flex justify-center">
-          <a
+          <ScrollLink
             className="bg-[#FBCD2F] px-6 py-4 text-base font-bold text-[#00132d] transition hover:bg-white"
             href="#konsultasi"
           >
             Konsultasikan Kebutuhanmu
-          </a>
+          </ScrollLink>
         </div>
       </div>
     </section>

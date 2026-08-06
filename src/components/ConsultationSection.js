@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { FaComments, FaCompass, FaLightbulb, FaListCheck } from "react-icons/fa6";
+import ScrollLink from "@/components/ScrollLink";
 
 const consultationSteps = [
   {
@@ -40,9 +41,9 @@ function ConsultationStep({ step, index }) {
   return (
     <motion.article
       className="relative border-t-2 border-[#FBCD2F] pt-4"
-      initial={false}
+      initial={{ opacity: 0, y: -8 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: false, amount: 0.12 }}
       transition={{
         duration: 0.5,
         delay: index * 0.1,
@@ -78,17 +79,17 @@ export default function ConsultationSection() {
     >
       <motion.div
         className="absolute inset-x-0 top-0 h-1 origin-left bg-[linear-gradient(90deg,#17E9E5_0%,#DF00A8_50%,#FFB400_100%)]"
-        initial={false}
+        initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
+        viewport={{ once: false }}
         transition={{ duration: 1, ease: "easeOut" }}
       />
       <div className="mx-auto max-w-[1240px]">
         <motion.div
           className="mx-auto max-w-3xl text-center"
-          initial={false}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: false, amount: 0.15 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#d5a900]">
@@ -96,9 +97,9 @@ export default function ConsultationSection() {
           </p>
           <motion.h2
             className="text-3xl font-black leading-tight text-[#00132d] sm:text-5xl"
-            initial={false}
+            initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={{ once: false, amount: 0.15 }}
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
           >
             Jawab, temukan, lalu <motion.span
@@ -123,21 +124,25 @@ export default function ConsultationSection() {
 
         <motion.div
           className="mt-14 flex justify-center"
-          initial={false}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: false, amount: 0.15 }}
           transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
         >
-          <motion.a
-            className="inline-flex items-center justify-center bg-[#FBCD2F] px-6 py-4 text-base font-bold text-[#00132d] transition hover:bg-[#00132d] hover:text-white"
-            href="#mulai-konsultasi"
-            aria-label="Mulai konsultasi"
+          <motion.div
+            className="inline-flex"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: "spring", stiffness: 300, damping: 18 }}
           >
-            Mulai Konsultasi
-          </motion.a>
+            <ScrollLink
+              className="inline-flex items-center justify-center bg-[#FBCD2F] px-6 py-4 text-base font-bold text-[#00132d] transition hover:bg-[#00132d] hover:text-white"
+              href="#konsultasi"
+              aria-label="Mulai konsultasi"
+            >
+              Mulai Konsultasi
+            </ScrollLink>
+          </motion.div>
         </motion.div>
       </div>
     </section>

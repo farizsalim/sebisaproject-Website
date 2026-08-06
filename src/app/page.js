@@ -5,6 +5,9 @@ import ServicesSection from "@/components/ServicesSection";
 import ClientsSection from "@/components/ClientsSection";
 import AboutSection from "@/components/AboutSection";
 import CaseStudySection from "@/components/CaseStudySection";
+import FaqSection from "@/components/FaqSection";
+import FinalCtaSection from "@/components/FinalCtaSection";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -16,6 +19,9 @@ export default function Home() {
       <ClientsSection />
       <AboutSection />
       <CaseStudySection />
+      <FaqSection />
+      <FinalCtaSection />
+      <Footer />
     </div>
   );
 }

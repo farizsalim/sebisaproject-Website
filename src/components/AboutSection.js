@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "motion/react";
 
 export default function AboutSection() {
   return (
@@ -10,7 +13,12 @@ export default function AboutSection() {
       <div className="absolute inset-0 bg-[#00132d]/80" />
       <div className="absolute inset-x-0 top-0 z-10 h-1 bg-[linear-gradient(90deg,#17E9E5_0%,#FBCD2F_50%,#DF00A8_100%)]" />
       <div className="relative z-10 mx-auto grid max-w-[1240px] items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
-        <div>
+        <motion.div
+          initial={{ opacity: 0, x: -28 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.25 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        >
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#00AFC1] sm:text-sm">
             Tentang Kami
           </p>
@@ -40,9 +48,15 @@ export default function AboutSection() {
           <p className="mt-7 border-l-4 border-[#FBCD2F] pl-4 text-base font-black leading-6 text-white sm:text-lg">
             Dari Ide Menjadi Realita, Dari Strategi Menjadi Hasil.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="relative min-h-[360px] overflow-hidden bg-[#00264d] p-5 sm:min-h-[480px] sm:p-8">
+        <motion.div
+          className="relative min-h-[360px] overflow-hidden bg-[#00264d] p-5 sm:min-h-[480px] sm:p-8"
+          initial={{ opacity: 0, x: 28, scale: 0.97 }}
+          whileInView={{ opacity: 1, x: 0, scale: 1 }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ duration: 0.8, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+        >
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full border-[28px] border-[#17E9E5]/15" />
           <div className="absolute -bottom-24 -left-20 h-64 w-64 rounded-full border-[28px] border-[#FBCD2F]/20" />
           <div className="absolute inset-5 border border-white/15 sm:inset-8" />
@@ -59,7 +73,7 @@ export default function AboutSection() {
               Partner kreatif dan strategis
             </span>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
