@@ -16,17 +16,16 @@ const headingSegments = [
 export default function Hero() {
   return (
     <section
-      className="relative -mt-[100px] box-border flex h-[285px] items-center justify-center bg-cover bg-center px-6 pt-[82px] [font-family:Arial,sans-serif] sm:h-[600px] lg:px-8"
-      style={{ backgroundImage: "url('/images/portofolio.png')" }}
+      className="relative -mt-[90px] box-border flex min-h-[520px] items-center justify-center bg-cover bg-center px-4 pb-10 pt-[100px] [font-family:Arial,sans-serif] sm:-mt-[100px] sm:min-h-[600px] sm:px-6 sm:pt-[110px] lg:px-8"
+      style={{ backgroundImage: "url('/images/Portofolio.png')" }}
     >
       <div className="absolute inset-0 bg-black/45" />
       <div className="relative mx-auto flex w-full max-w-7xl justify-center">
         <div className="max-w-4xl text-center">
           <motion.h1
             aria-label="Punya Ide Digital? Tapi Bingung Untuk Memulainya?"
-            className="text-4xl font-black leading-[1.15] sm:text-5xl lg:text-[56px]"
-            initial="hidden"
-            animate="visible"
+            className="text-3xl font-black leading-[1.15] sm:text-5xl lg:text-[56px]"
+            initial={false}
           >
             {headingSegments.map((segment, segmentIndex) => (
               <Fragment key={segment.text}>
@@ -57,7 +56,7 @@ export default function Hero() {
             ))}
           </motion.h1>
 
-          <div className="mt-7 flex min-h-[70px] w-full flex-col items-center justify-start gap-3 sm:flex-row sm:justify-center">
+          <div className="mt-7 flex min-h-[70px] w-full flex-col items-stretch justify-start gap-3 sm:flex-row sm:items-center sm:justify-center">
             <motion.a
               className="inline-flex min-h-[52px] items-center justify-center rounded-sm bg-[#FBCD2F] px-6 py-4 text-base font-bold text-[#00132d] transition hover:bg-white sm:min-w-[190px]"
               href="#konsultasi"

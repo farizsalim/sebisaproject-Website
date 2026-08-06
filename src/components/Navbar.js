@@ -1,31 +1,34 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 12);
 
-    handleScroll();
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
     <nav
       className={`sticky top-0 z-50 w-full border-b transition-all duration-300 [font-family:Arial,sans-serif] ${
-        isScrolled
-          ? "border-white/15 bg-[#00132d]/75 shadow-lg backdrop-blur-md"
-          : "border-transparent bg-transparent"
+        isScrolled || isMenuOpen
+          ? "border-white/15 bg-[#00132d]/95 shadow-lg backdrop-blur-md"
+          : "border-transparent bg-transparent shadow-none"
       }`}
     >
-      <div className="mx-auto flex min-h-[82px] w-full max-w-[1240px] items-center justify-between gap-8 px-6 py-3 lg:px-0">
-        <a href="/" className="flex shrink-0 items-center gap-3 text-white">
-          <span className="relative block h-[70px] w-[220px] overflow-hidden">
+      <div className="mx-auto flex min-h-[72px] w-full max-w-[1240px] items-center justify-between gap-4 px-4 py-2 sm:min-h-[82px] sm:px-6 sm:py-3 lg:px-0">
+        <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3 text-white">
+          <span className="relative block h-[58px] w-[170px] overflow-hidden sm:h-[70px] sm:w-[220px]">
             <Image
               src="/images/logo-sebisa-project.png"
               alt="Sebisa Project"
@@ -35,7 +38,7 @@ export default function Navbar() {
               className="object-cover object-center"
             />
           </span>
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-6 text-[16px] font-normal text-white lg:flex">
           <a
@@ -86,9 +89,11 @@ export default function Navbar() {
         </div>
 
         <button
-          aria-label="Buka menu navigasi"
-          className="flex h-11 w-11 items-center justify-center border border-white/40 text-white lg:hidden"
+          aria-expanded={isMenuOpen}
+          aria-label={isMenuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
+          className="flex h-11 w-11 shrink-0 items-center justify-center border border-white/40 text-white lg:hidden"
           type="button"
+          onClick={() => setIsMenuOpen((open) => !open)}
         >
           <span className="flex w-5 flex-col gap-1.5">
             <span className="h-0.5 w-full bg-white" />
@@ -97,6 +102,16 @@ export default function Navbar() {
           </span>
         </button>
       </div>
+      {isMenuOpen ? (
+        <div className="absolute left-0 right-0 top-full border-t border-white/15 bg-[#00132d]/95 px-4 py-4 shadow-lg backdrop-blur-md lg:hidden">
+          <div className="mx-auto flex max-w-[1240px] flex-col gap-1 text-sm font-bold text-white">
+            <a className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#" onClick={closeMenu}>Beranda</a>
+            <a className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#layanan" onClick={closeMenu}>Layanan</a>
+            <a className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#studi-kasus" onClick={closeMenu}>Portofolio</a>
+            <a className="mt-2 bg-[#FBCD2F] px-3 py-3 text-center text-[#00132d]" href="#konsultasi" onClick={closeMenu}>Konsultasi</a>
+          </div>
+        </div>
+      ) : null}
     </nav>
   );
 }

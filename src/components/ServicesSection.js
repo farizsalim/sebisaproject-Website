@@ -74,13 +74,13 @@ export default function ServicesSection() {
   return (
     <section
       id="layanan"
-      className="relative overflow-hidden bg-[#00132d] px-6 py-14 text-white [font-family:Arial,sans-serif] sm:py-16 lg:px-8"
+      className="relative overflow-hidden bg-[#00132d] px-4 py-14 text-white [font-family:Arial,sans-serif] sm:px-6 sm:py-16 lg:px-8"
     >
       <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#17E9E5_0%,#DF00A8_50%,#FFB400_100%)]" />
       <div className="mx-auto max-w-[1240px]">
         <motion.div
           className="max-w-2xl"
-          initial={{ opacity: 0, y: 24 }}
+          initial={false}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
@@ -135,7 +135,7 @@ export default function ServicesSection() {
         ) : (
           <div className="mt-8">
             <div className="mb-4 flex items-center justify-between gap-4">
-              <h3 className="text-xl font-bold">
+              <h3 className="min-w-0 text-lg font-bold sm:text-xl">
                 {activeCategory === "all" ? "Semua layanan" : activeCategory}
               </h3>
               <div className="flex items-center gap-3">
@@ -171,8 +171,8 @@ export default function ServicesSection() {
               {filteredServices.map((service, index) => (
                     <motion.article
                       key={service.name}
-                      className="flex h-[285px] w-[min(78vw,310px)] shrink-0 snap-start flex-col border border-white/15 bg-[#00264d]/75 p-5 transition-all hover:border-[#DF00A8] hover:shadow-[0_0_22px_rgba(223,0,168,0.22)] sm:w-[310px]"
-                      initial={{ opacity: 0, y: 20 }}
+                      className="flex h-[285px] w-[min(82vw,310px)] shrink-0 snap-start flex-col border border-white/15 bg-[#00264d]/75 p-4 transition-all hover:border-[#DF00A8] hover:shadow-[0_0_22px_rgba(223,0,168,0.22)] sm:w-[310px] sm:p-5"
+                      initial={false}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, amount: 0.15 }}
                       transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
