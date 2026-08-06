@@ -6,7 +6,7 @@ import ScrollLink from "@/components/ScrollLink";
 export default function FinalCtaSection() {
   return (
     <section
-      className="relative overflow-hidden bg-[#00132d] bg-cover bg-center px-4 py-16 text-white [font-family:Arial,sans-serif] sm:px-6 sm:py-24 lg:px-8"
+      className="relative overflow-hidden bg-[#00132d] bg-cover bg-center px-4 py-16 text-white [content-visibility:auto] [contain-intrinsic-size:500px] [font-family:Arial,sans-serif] sm:px-6 sm:py-24 lg:px-8"
       style={{ backgroundImage: "url('/images/Portofolio.png')" }}
     >
       <div className="absolute inset-0 bg-[#00132d]/85" />

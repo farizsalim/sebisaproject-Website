@@ -28,7 +28,7 @@ const faqItems = [
 
 export default function FaqSection() {
   return (
-    <section className="relative overflow-hidden bg-[#00132d] px-4 py-14 text-white [font-family:Arial,sans-serif] sm:px-6 sm:py-20 lg:px-8">
+    <section className="relative overflow-hidden bg-[#00132d] px-4 py-14 text-white [content-visibility:auto] [contain-intrinsic-size:650px] [font-family:Arial,sans-serif] sm:px-6 sm:py-20 lg:px-8">
       <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#17E9E5_0%,#FBCD2F_50%,#DF00A8_100%)]" />
       <div className="mx-auto grid max-w-[1240px] gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
         <div>

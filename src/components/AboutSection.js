@@ -2,12 +2,15 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
+import { useState } from "react";
 
 export default function AboutSection() {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
     <section
       id="tentang-kami"
-      className="relative overflow-hidden bg-[#00132d] bg-cover bg-center px-4 py-14 text-white [font-family:Arial,sans-serif] sm:px-6 sm:py-24 lg:px-8"
+      className="relative overflow-hidden bg-[#00132d] bg-cover bg-center px-4 py-14 text-white [content-visibility:auto] [contain-intrinsic-size:800px] [font-family:Arial,sans-serif] sm:px-6 sm:py-24 lg:px-8"
       style={{ backgroundImage: "url('/images/Portofolio.png')" }}
     >
       <div className="absolute inset-0 bg-[#00132d]/80" />
@@ -27,27 +30,38 @@ export default function AboutSection() {
           </h2>
           <div className="mt-6 max-w-2xl space-y-4 text-sm leading-7 text-white/70 sm:mt-8 sm:text-base">
             <p>
-              Sebisa Project hadir sebagai partner kreatif dan strategis untuk
-              membantu bisnis, brand, maupun personal brand berkembang lebih
-              cepat di era digital. Kami percaya setiap ide besar layak
-              diwujudkan dengan eksekusi yang tepat, desain yang menarik, serta
-              strategi yang menghasilkan dampak nyata.
+              Sebisa Project adalah partner kreatif dan strategis untuk membantu
+              bisnis, brand, dan personal brand tumbuh lebih kuat di era digital.
             </p>
-            <p>
-              Kami melayani kebutuhan B2B maupun B2C, mulai dari pengembangan
-              branding, desain kreatif, produksi konten, pengelolaan social
-              media, iklan digital, pembuatan website, hingga solusi bisnis
-              yang disesuaikan dengan kebutuhan Anda.
-            </p>
-            <p>
-              Dengan pendekatan profesional, fleksibel, dan berorientasi hasil,
-              kami tidak hanya mengerjakan proyek, tetapi membangun hubungan
-              kerja sama jangka panjang yang saling menguntungkan.
-            </p>
+            {isExpanded ? (
+              <>
+                <p>
+                  Kami melayani kebutuhan B2B maupun B2C, mulai dari pengembangan
+                  branding, desain kreatif, produksi konten, pengelolaan social
+                  media, iklan digital, pembuatan website, hingga solusi bisnis
+                  yang disesuaikan dengan kebutuhan Anda.
+                </p>
+                <p>
+                  Dengan pendekatan profesional, fleksibel, dan berorientasi hasil,
+                  kami tidak hanya mengerjakan proyek, tetapi membangun hubungan
+                  kerja sama jangka panjang yang saling menguntungkan.
+                </p>
+              </>
+            ) : null}
           </div>
-          <p className="mt-7 border-l-4 border-[#FBCD2F] pl-4 text-base font-black leading-6 text-white sm:text-lg">
-            Dari Ide Menjadi Realita, Dari Strategi Menjadi Hasil.
-          </p>
+          <button
+            type="button"
+            aria-expanded={isExpanded}
+            onClick={() => setIsExpanded((expanded) => !expanded)}
+            className="mt-6 border-b border-[#17E9E5] pb-1 text-sm font-bold text-[#17E9E5] transition hover:border-[#FBCD2F] hover:text-[#FBCD2F]"
+          >
+            {isExpanded ? "Sembunyikan" : "Baca selengkapnya"}
+          </button>
+          {isExpanded ? (
+            <p className="mt-7 border-l-4 border-[#FBCD2F] pl-4 text-base font-black leading-6 text-white sm:text-lg">
+              Dari Ide Menjadi Realita, Dari Strategi Menjadi Hasil.
+            </p>
+          ) : null}
         </motion.div>
 
         <motion.div

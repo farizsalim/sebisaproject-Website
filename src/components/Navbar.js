@@ -34,7 +34,6 @@ export default function Navbar() {
               src="/images/logo-sebisa-project.png"
               alt="Sebisa Project"
               fill
-              priority
               sizes="220px"
               className="object-cover object-center"
             />

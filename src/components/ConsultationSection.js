@@ -1,37 +1,27 @@
 "use client";
 
 import { motion } from "motion/react";
-import { FaComments, FaCompass, FaLightbulb, FaListCheck } from "react-icons/fa6";
+import { FaComments, FaLightbulb, FaListCheck } from "react-icons/fa6";
 import ScrollLink from "@/components/ScrollLink";
 
 const consultationSteps = [
   {
     number: "01",
     icon: FaLightbulb,
-    title: "Jawab pertanyaan singkat",
-    description:
-      "Ceritakan ide, tantangan, dan tujuan digitalmu lewat beberapa pertanyaan sederhana.",
+    title: "Ceritakan kebutuhanmu",
+    description: "Jawab beberapa pertanyaan singkat tentang ide dan tujuan digitalmu.",
   },
   {
     number: "02",
     icon: FaListCheck,
-    title: "Dapatkan rekomendasi layanan",
-    description:
-      "Jawabanmu akan membantu mengarahkanmu ke layanan yang paling sesuai dengan kebutuhanmu.",
+    title: "Temukan arah yang tepat",
+    description: "Dapatkan rekomendasi layanan dan gambaran solusi yang sesuai.",
   },
   {
     number: "03",
-    icon: FaCompass,
-    title: "Pahami langkah berikutnya",
-    description:
-      "Lihat gambaran solusi dan pilihan langkah yang bisa kamu ambil bersama Sebisa Project.",
-  },
-  {
-    number: "04",
     icon: FaComments,
-    title: "Butuh diskusi lebih lanjut?",
-    description:
-      "Setelah melihat rekomendasi, kamu bisa melanjutkan diskusi dengan admin Sebisa Project melalui WhatsApp.",
+    title: "Lanjutkan diskusi",
+    description: "Bahas langkah berikutnya bersama tim Sebisa Project melalui WhatsApp.",
   },
 ];
 
@@ -75,7 +65,7 @@ export default function ConsultationSection() {
   return (
     <section
       id="konsultasi"
-      className="relative overflow-hidden bg-[#f7f9fc] px-6 py-20 [font-family:Arial,sans-serif] sm:py-24 lg:px-8"
+      className="relative overflow-hidden bg-[#f7f9fc] px-6 py-20 [content-visibility:auto] [contain-intrinsic-size:700px] [font-family:Arial,sans-serif] sm:py-24 lg:px-8"
     >
       <motion.div
         className="absolute inset-x-0 top-0 h-1 origin-left bg-[linear-gradient(90deg,#17E9E5_0%,#DF00A8_50%,#FFB400_100%)]"
@@ -115,8 +105,8 @@ export default function ConsultationSection() {
           </p>
         </motion.div>
 
-        <div className="relative mt-14 grid gap-8 md:grid-cols-4 md:gap-5">
-          <div className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-7 hidden h-px bg-[#00132d]/15 md:block" />
+        <div className="relative mx-auto mt-12 grid max-w-5xl gap-8 md:grid-cols-3 md:gap-8">
+          <div className="pointer-events-none absolute left-[16.5%] right-[16.5%] top-7 hidden h-px bg-[#00132d]/15 md:block" />
           {consultationSteps.map((step, index) => (
             <ConsultationStep key={step.number} step={step} index={index} />
           ))}

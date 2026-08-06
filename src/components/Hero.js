@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import Image from "next/image";
 import { Fragment } from "react";
 import ScrollLink from "@/components/ScrollLink";
 
@@ -17,11 +18,18 @@ const headingSegments = [
 export default function Hero() {
   return (
     <section
-      className="relative -mt-[90px] box-border flex min-h-[520px] items-center justify-center bg-cover bg-center px-4 pb-10 pt-[100px] [font-family:Arial,sans-serif] sm:-mt-[100px] sm:min-h-[600px] sm:px-6 sm:pt-[110px] lg:px-8"
-      style={{ backgroundImage: "url('/images/Portofolio.png')" }}
+      className="relative -mt-[90px] box-border flex min-h-[520px] items-center justify-center overflow-hidden px-4 pb-10 pt-[100px] [font-family:Arial,sans-serif] sm:-mt-[100px] sm:min-h-[600px] sm:px-6 sm:pt-[110px] lg:px-8"
     >
-      <div className="absolute inset-0 bg-[#00132d]/70" />
-      <div className="relative mx-auto flex w-full max-w-7xl justify-center">
+      <Image
+        src="/images/Portofolio.png"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="absolute inset-0 z-0 object-cover object-center"
+      />
+      <div className="absolute inset-0 z-10 bg-[#00132d]/70" />
+      <div className="relative z-20 mx-auto flex w-full max-w-7xl justify-center">
         <div className="max-w-4xl text-center">
           <motion.h1
             aria-label="Punya Ide Digital? Tapi Bingung Untuk Memulainya?"
@@ -57,7 +65,7 @@ export default function Hero() {
             ))}
           </motion.h1>
 
-          <div className="mt-7 flex min-h-[70px] w-full flex-col items-stretch justify-start gap-3 sm:flex-row sm:items-center sm:justify-center">
+          <div className="mt-7 flex min-h-[70px] w-full flex-col items-center justify-start gap-3 sm:flex-row sm:items-center sm:justify-center">
             <motion.div
               className="inline-flex"
               initial={{ opacity: 0, y: 18, filter: "blur(4px)" }}

@@ -11,6 +11,7 @@ export default function CaseStudySection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [mediaOffset, setMediaOffset] = useState(0);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+  const [isIntroExpanded, setIsIntroExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -84,7 +85,7 @@ export default function CaseStudySection() {
 
   return (
     <section
-      className="relative overflow-hidden bg-[#f7f9fc] px-4 py-10 text-[#00132d] [font-family:Arial,sans-serif] sm:px-6 sm:py-20 lg:px-8"
+      className="relative overflow-hidden bg-[#f7f9fc] px-4 py-10 text-[#00132d] [content-visibility:auto] [contain-intrinsic-size:800px] [font-family:Arial,sans-serif] sm:px-6 sm:py-20 lg:px-8"
     >
       <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#17E9E5_0%,#FBCD2F_50%,#DF00A8_100%)]" />
       <div className="mx-auto max-w-[1240px]">
@@ -102,10 +103,18 @@ export default function CaseStudySection() {
             <h2 className="max-w-2xl text-2xl font-black leading-tight sm:text-4xl">
               Kisah di balik setiap project.
             </h2>
-            <p className="mt-3 hidden max-w-xl text-sm leading-6 text-slate-600 sm:mt-4 sm:block sm:text-base">
+            <p className={`${isIntroExpanded ? "block" : "hidden sm:block"} mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:mt-4 sm:text-base`}>
               Lihat proses dan hasil kerja yang membantu brand tumbuh lebih
               dekat dengan audiensnya.
             </p>
+            <button
+              className="mt-3 text-xs font-bold text-[#00AFC1] underline underline-offset-4 sm:hidden"
+              type="button"
+              aria-expanded={isIntroExpanded}
+              onClick={() => setIsIntroExpanded((expanded) => !expanded)}
+            >
+              {isIntroExpanded ? "Sembunyikan" : "Baca selengkapnya"}
+            </button>
           </div>
           <div className="hidden shrink-0 gap-2 lg:flex">
             <button
@@ -156,10 +165,10 @@ export default function CaseStudySection() {
               <p className="inline-flex items-center border-l-4 border-[#FBCD2F] bg-[#17E9E5]/10 px-3 py-2 text-sm font-black tracking-[0.04em] text-[#00132d] sm:text-base">
                 {activeCase.eyebrow}
               </p>
-              <h3 className="mt-3 max-w-2xl line-clamp-2 text-xl font-black leading-[1.12] sm:mt-4 sm:line-clamp-none sm:text-3xl sm:leading-tight lg:text-4xl">
+              <h3 className="mt-3 max-w-2xl text-xl font-black leading-[1.12] sm:mt-4 sm:text-3xl sm:leading-tight lg:text-4xl">
                 {activeCase.title}
               </h3>
-              <p className={`${isDetailsExpanded ? "" : "line-clamp-2"} mt-3 max-w-xl text-xs leading-5 text-slate-600 sm:mt-5 sm:line-clamp-none sm:text-base sm:leading-7`}>
+              <p className={`${isDetailsExpanded ? "" : "line-clamp-2"} mt-3 max-w-xl text-xs leading-5 text-slate-600 sm:mt-5 sm:text-base sm:leading-7`}>
                 {activeCase.description}
               </p>
               <div className="mt-4 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.1em] sm:mt-8 sm:gap-3 sm:text-xs sm:tracking-[0.12em]">
@@ -181,18 +190,18 @@ export default function CaseStudySection() {
                       rel="noreferrer"
                     >
                       <p className="text-sm font-bold text-[#00132d]">{service.label}</p>
-                      <p className={`${isDetailsExpanded ? "block" : "hidden"} mt-1 text-sm leading-6 text-slate-600 sm:block`}>{service.description}</p>
+                      <p className={`${isDetailsExpanded ? "block" : "hidden"} mt-1 text-sm leading-6 text-slate-600`}>{service.description}</p>
                     </a>
                   ) : (
                     <div key={service.label} className="border border-[#17aeb0]/40 px-3 py-2 sm:border-0 sm:border-l-2 sm:px-0 sm:py-0 sm:pl-4">
                       <p className="text-sm font-bold text-[#00132d]">{service.label}</p>
-                      <p className={`${isDetailsExpanded ? "block" : "hidden"} mt-1 text-sm leading-6 text-slate-600 sm:block`}>{service.description}</p>
+                      <p className={`${isDetailsExpanded ? "block" : "hidden"} mt-1 text-sm leading-6 text-slate-600`}>{service.description}</p>
                     </div>
                   )
                 ))}
               </div>
               <button
-                className="mt-4 text-xs font-bold text-[#00AFC1] underline underline-offset-4 sm:hidden"
+                className="mt-4 text-xs font-bold text-[#00AFC1] underline underline-offset-4 transition hover:text-[#00132d]"
                 type="button"
                 aria-expanded={isDetailsExpanded}
                 onClick={() => setIsDetailsExpanded((expanded) => !expanded)}
@@ -234,6 +243,7 @@ export default function CaseStudySection() {
                       autoPlay
                       loop
                       muted
+                      preload="none"
                       playsInline
                     />
                   ) : (

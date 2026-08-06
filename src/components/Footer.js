@@ -1,4 +1,5 @@
 import ScrollLink from "@/components/ScrollLink";
+import { FaInstagram, FaLinkedinIn, FaTiktok, FaWhatsapp } from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -28,6 +29,48 @@ export default function Footer() {
           <ScrollLink className="mt-4 inline-block text-sm text-white/65 transition hover:text-[#FBCD2F]" href="#konsultasi">
             Mulai dari konsultasi
           </ScrollLink>
+          <div className="mt-5 flex items-center gap-3">
+            <a
+              aria-label="Instagram Sebisa Project"
+              className="flex h-10 w-10 items-center justify-center border border-white/15 text-white/65 transition hover:border-[#17E9E5] hover:text-[#17E9E5]"
+              href="https://www.instagram.com/sebisaproject/"
+              rel="noreferrer"
+              target="_blank"
+              title="Instagram"
+            >
+              <FaInstagram aria-hidden="true" />
+            </a>
+            <a
+              aria-label="LinkedIn Sebisa Project"
+              className="flex h-10 w-10 items-center justify-center border border-white/15 text-white/65 transition hover:border-[#17E9E5] hover:text-[#17E9E5]"
+              href="https://www.linkedin.com/company/sebisa-project/"
+              rel="noreferrer"
+              target="_blank"
+              title="LinkedIn"
+            >
+              <FaLinkedinIn aria-hidden="true" />
+            </a>
+            <a
+              aria-label="TikTok Sebisa Project"
+              className="flex h-10 w-10 items-center justify-center border border-white/15 text-white/65 transition hover:border-[#17E9E5] hover:text-[#17E9E5]"
+              href="https://www.tiktok.com/@sebisaproject"
+              rel="noreferrer"
+              target="_blank"
+              title="TikTok"
+            >
+              <FaTiktok aria-hidden="true" />
+            </a>
+            <a
+              aria-label="WhatsApp Sebisa Project"
+              className="flex h-10 w-10 items-center justify-center border border-white/15 text-white/65 transition hover:border-[#17E9E5] hover:text-[#17E9E5]"
+              href="https://wa.me/6280000000000"
+              rel="noreferrer"
+              target="_blank"
+              title="WhatsApp"
+            >
+              <FaWhatsapp aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </div>
       <div className="mx-auto mt-10 max-w-[1240px] border-t border-white/10 pt-5 text-xs text-white/40">
