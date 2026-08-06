@@ -73,11 +73,12 @@ export default function ServicesSection() {
 
   return (
     <section
-      id="layanan"
-      className="relative overflow-hidden bg-[#00132d] px-4 py-14 text-white [font-family:Arial,sans-serif] sm:px-6 sm:py-16 lg:px-8"
+      className="relative overflow-hidden bg-[#00132d] bg-cover bg-center px-4 py-14 text-white [font-family:Arial,sans-serif] sm:px-6 sm:py-16 lg:px-8"
+      style={{ backgroundImage: "url('/images/Portofolio.png')" }}
     >
-      <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#17E9E5_0%,#DF00A8_50%,#FFB400_100%)]" />
-      <div className="mx-auto max-w-[1240px]">
+      <div className="absolute inset-0 bg-[#00132d]/90" />
+      <div className="absolute inset-x-0 top-0 z-10 h-1 bg-[linear-gradient(90deg,#17E9E5_0%,#DF00A8_50%,#FFB400_100%)]" />
+      <div className="relative z-10 mx-auto max-w-[1240px]">
         <motion.div
           className="max-w-2xl"
           initial={false}
@@ -85,7 +86,7 @@ export default function ServicesSection() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#17E9E5]">
+          <p id="layanan" className="scroll-mt-[82px] mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#17E9E5] sm:scroll-mt-[102px]">
             Layanan Sebisa Project
           </p>
           <h2 className="text-3xl font-black leading-tight sm:text-4xl">
@@ -166,39 +167,46 @@ export default function ServicesSection() {
             </div>
             <div
               ref={servicesRailRef}
-              className="flex items-stretch snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="flex items-stretch snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden pb-8 pt-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {filteredServices.map((service, index) => (
                     <motion.article
                       key={service.name}
-                      className="flex h-[285px] w-[min(82vw,310px)] shrink-0 snap-start flex-col border border-white/15 bg-[#00264d]/75 p-4 transition-all hover:border-[#DF00A8] hover:shadow-[0_0_22px_rgba(223,0,168,0.22)] sm:w-[310px] sm:p-5"
+                      className={`group relative flex h-[300px] w-[min(82vw,310px)] shrink-0 snap-start flex-col overflow-hidden border border-white/15 bg-[#00264d]/75 p-4 transition-colors hover:border-[#17E9E5] hover:shadow-[0_0_22px_rgba(23,233,229,0.2)] sm:w-[310px] sm:p-5 lg:h-[310px] ${index % 2 === 1 ? "lg:mt-5" : ""}`}
                       initial={false}
                       whileInView={{ opacity: 1, y: 0 }}
+                      whileHover={{ y: -4 }}
                       viewport={{ once: true, amount: 0.15 }}
                       transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
                     >
-                      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-white/50">
-                        {service.category}
-                      </p>
-                      <div className="mb-3 flex items-center gap-2 text-lg text-[#17E9E5]">
+                      <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#17E9E5]/10 transition-transform duration-500 group-hover:scale-150" />
+                      <div className="relative flex items-start justify-between gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center border border-[#17E9E5]/40 bg-[#17E9E5]/10 text-sm font-black text-[#17E9E5]">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <p className="max-w-[72%] pt-1 text-right text-[10px] font-bold uppercase tracking-[0.14em] text-white/50">
+                          {service.category}
+                        </p>
+                      </div>
+                      <div className="relative mt-5 flex h-11 min-w-11 w-fit shrink-0 items-center justify-center gap-2 border-l-2 border-[#FBCD2F] bg-[#00132d]/60 px-3 text-lg text-[#17E9E5]">
                         {getServiceIcons(service.name).map((ServiceIcon) => (
                           <ServiceIcon key={ServiceIcon.name} aria-hidden="true" />
                         ))}
                       </div>
-                      <h4 className="text-base font-bold leading-snug text-white">
+                      <h4 className="relative mt-4 line-clamp-2 text-base font-bold leading-snug text-white sm:text-lg">
                         {service.name}
                       </h4>
-                      <div className="mt-4 flex flex-wrap items-baseline gap-2">
-                        <span className="text-sm text-white/45 line-through">
+                      <p className="relative mt-2 line-clamp-2 text-xs leading-5 text-white/60">
+                        {service.description}
+                      </p>
+                      <div className="relative mt-auto flex items-end justify-between gap-3 border-t border-white/10 pt-3">
+                        <span className="text-[11px] text-white/40 line-through">
                           {service.originalPrice}
                         </span>
                         <span className="text-xl font-black text-[#FBCD2F]">
                           {service.price}
                         </span>
                       </div>
-                      <p className="mt-3 line-clamp-4 text-xs leading-5 text-white/65">
-                        {service.description}
-                      </p>
                     </motion.article>
               ))}
             </div>

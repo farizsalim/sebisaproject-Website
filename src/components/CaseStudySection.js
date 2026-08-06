@@ -84,7 +84,6 @@ export default function CaseStudySection() {
 
   return (
     <section
-      id="studi-kasus"
       className="relative overflow-hidden bg-[#f7f9fc] px-4 py-10 text-[#00132d] [font-family:Arial,sans-serif] sm:px-6 sm:py-20 lg:px-8"
     >
       <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#17E9E5_0%,#FBCD2F_50%,#DF00A8_100%)]" />
@@ -97,11 +96,11 @@ export default function CaseStudySection() {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <div className="max-w-3xl">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#d5a900] sm:mb-3 sm:text-sm">
-              Cerita di balik karya
+            <p id="studi-kasus" className="scroll-mt-[82px] mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#d5a900] sm:mb-3 sm:scroll-mt-[102px] sm:text-sm">
+              Kisah di balik karya
             </p>
             <h2 className="max-w-2xl text-2xl font-black leading-tight sm:text-4xl">
-              Cerita di balik setiap project.
+              Kisah di balik setiap project.
             </h2>
             <p className="mt-3 hidden max-w-xl text-sm leading-6 text-slate-600 sm:mt-4 sm:block sm:text-base">
               Lihat proses dan hasil kerja yang membantu brand tumbuh lebih
@@ -152,10 +151,10 @@ export default function CaseStudySection() {
               onDragEnd={handleCaseSwipe}
             >
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#17aeb0]">
+              <p className="inline-flex items-center border-l-4 border-[#FBCD2F] bg-[#17E9E5]/10 px-3 py-2 text-sm font-black tracking-[0.04em] text-[#00132d] sm:text-base">
                 {activeCase.eyebrow}
               </p>
-              <h3 className="mt-3 line-clamp-2 text-2xl font-black leading-tight sm:mt-4 sm:line-clamp-none sm:text-4xl">
+              <h3 className="mt-3 max-w-2xl line-clamp-2 text-xl font-black leading-[1.12] sm:mt-4 sm:line-clamp-none sm:text-3xl sm:leading-tight lg:text-4xl">
                 {activeCase.title}
               </h3>
               <p className={`${isDetailsExpanded ? "" : "line-clamp-2"} mt-3 max-w-xl text-xs leading-5 text-slate-600 sm:mt-5 sm:line-clamp-none sm:text-base sm:leading-7`}>

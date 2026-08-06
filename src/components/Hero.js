@@ -19,7 +19,7 @@ export default function Hero() {
       className="relative -mt-[90px] box-border flex min-h-[520px] items-center justify-center bg-cover bg-center px-4 pb-10 pt-[100px] [font-family:Arial,sans-serif] sm:-mt-[100px] sm:min-h-[600px] sm:px-6 sm:pt-[110px] lg:px-8"
       style={{ backgroundImage: "url('/images/Portofolio.png')" }}
     >
-      <div className="absolute inset-0 bg-black/45" />
+      <div className="absolute inset-0 bg-[#00132d]/70" />
       <div className="relative mx-auto flex w-full max-w-7xl justify-center">
         <div className="max-w-4xl text-center">
           <motion.h1

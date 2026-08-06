@@ -49,7 +49,7 @@ export default function Navbar() {
           </a>
           <a
             className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
-            href="#"
+            href="#tentang-kami"
           >
             Tentang Kami
           </a>
@@ -61,21 +61,15 @@ export default function Navbar() {
           </a>
           <a
             className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
+            href="#mitra"
+          >
+            Mitra
+          </a>
+          <a
+            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
             href="#studi-kasus"
           >
-            Portofolio
-          </a>
-          <a
-            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
-            href="#"
-          >
-            Karir
-          </a>
-          <a
-            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
-            href="#"
-          >
-            Kontak
+            Kisah
           </a>
         </div>
 
@@ -84,7 +78,7 @@ export default function Navbar() {
             className="bg-[#FBCD2F] px-5 py-3 text-[15px] text-[#00132d] transition-colors hover:bg-white font-bold"
             href="#konsultasi"
           >
-            Konsultasi
+            Mulai Konsultasi
           </a>
         </div>
 
@@ -106,9 +100,11 @@ export default function Navbar() {
         <div className="absolute left-0 right-0 top-full border-t border-white/15 bg-[#00132d]/95 px-4 py-4 shadow-lg backdrop-blur-md lg:hidden">
           <div className="mx-auto flex max-w-[1240px] flex-col gap-1 text-sm font-bold text-white">
             <a className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#" onClick={closeMenu}>Beranda</a>
+            <a className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#tentang-kami" onClick={closeMenu}>Tentang Kami</a>
             <a className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#layanan" onClick={closeMenu}>Layanan</a>
-            <a className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#studi-kasus" onClick={closeMenu}>Portofolio</a>
-            <a className="mt-2 bg-[#FBCD2F] px-3 py-3 text-center text-[#00132d]" href="#konsultasi" onClick={closeMenu}>Konsultasi</a>
+            <a className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#mitra" onClick={closeMenu}>Mitra</a>
+            <a className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#studi-kasus" onClick={closeMenu}>Kisah</a>
+            <a className="mt-2 bg-[#FBCD2F] px-3 py-3 text-center text-[#00132d]" href="#konsultasi" onClick={closeMenu}>Mulai Konsultasi</a>
           </div>
         </div>
       ) : null}
