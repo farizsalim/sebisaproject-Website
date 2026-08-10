@@ -39,9 +39,9 @@ export default function ClientsSection() {
   return (
     <section
       id="mitra"
-      className="relative overflow-hidden bg-[linear-gradient(180deg,#F4FBFE_0%,#EAF8FD_100%)] px-4 py-12 text-[#06466B] [content-visibility:auto] [contain-intrinsic-size:700px] [font-family:Arial,sans-serif] sm:px-6 sm:py-20 lg:px-8"
+      className="brand-clients-gradient relative overflow-hidden px-4 py-12 text-deep-navy [content-visibility:auto] [contain-intrinsic-size:700px] [font-family:Arial,sans-serif] sm:px-6 sm:py-20 lg:px-8"
     >
-      <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#21BCFB_0%,#81CEEF_100%)]" />
+      <div className="brand-top-line absolute inset-x-0 top-0 h-1" />
       <div className="mx-auto max-w-[1240px]">
         <motion.div
           className="max-w-2xl"
@@ -50,11 +50,11 @@ export default function ClientsSection() {
           viewport={{ once: false, amount: 0.25 }}
           transition={{ duration: 0.1, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-[#06466B] sm:text-sm">
+          <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-deep-navy sm:text-sm">
             Mitra Sebisa Project
           </p>
-          <h2 className="max-w-xl text-2xl font-black uppercase leading-[1.02] tracking-tight [text-shadow:3px_3px_0_#81CEEF] sm:text-4xl lg:text-[44px]">
-            Mereka yang pernah <span className="text-[#FF7A18]">bertumbuh</span> bersama kami.
+          <h2 className="max-w-xl text-2xl font-black uppercase leading-[1.02] tracking-tight [text-shadow:3px_3px_0_var(--brand-blue-light)] sm:text-4xl lg:text-[44px]">
+            Mereka yang pernah <span className="text-orange">bertumbuh</span> bersama kami.
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-6 text-slate-600 sm:text-base sm:leading-7">
             Setiap logo membawa cerita, kebutuhan, dan tantangan yang kami bantu

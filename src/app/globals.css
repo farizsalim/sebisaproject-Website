@@ -24,12 +24,24 @@ html {
 :root {
   --background: #ffffff;
   --foreground: #06466b;
-  --brand-blue: #21bcfb;
-  --brand-blue-light: #81ceef;
+  --brand-blue: #1ebdfe;
+  --brand-blue-light: #9bdffb;
   --brand-deep-navy: #06466b;
   --brand-surface: #f4fbfe;
-  --brand-hot-pink: #f51686;
-  --brand-orange: #ff7a18;
+  --brand-surface-alt: #e5f7fd;
+  --brand-surface-soft: #eaf8fd;
+  --brand-surface-blue: #e4f0f3;
+  --brand-panel: #e5eef5;
+  --brand-hot-pink: #f32d9b;
+  --brand-orange: #f3a137;
+  --brand-footer: #043b61;
+  --brand-footer-deep: #001c59;
+  --brand-muted: #64748b;
+  --brand-hero-navy-overlay: rgb(6 70 107 / 72%);
+  --brand-hero-blue-overlay: rgb(33 188 251 / 68%);
+  --brand-photo-navy-strong: rgb(6 70 107 / 84%);
+  --brand-photo-navy: rgb(6 70 107 / 68%);
+  --brand-photo-blue: rgb(33 188 251 / 62%);
 }
 
 @theme inline {
@@ -41,15 +53,58 @@ html {
   --color-brand-blue-light: var(--brand-blue-light);
   --color-deep-navy: var(--brand-deep-navy);
   --color-brand-surface: var(--brand-surface);
+  --color-brand-surface-alt: var(--brand-surface-alt);
+  --color-brand-surface-soft: var(--brand-surface-soft);
+  --color-brand-surface-blue: var(--brand-surface-blue);
+  --color-brand-panel: var(--brand-panel);
   --color-hot-pink: var(--brand-hot-pink);
   --color-orange: var(--brand-orange);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-footer: var(--brand-footer);
+  --color-brand-footer-deep: var(--brand-footer-deep);
+  --color-brand-muted: var(--brand-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.brand-top-line {
+  background: linear-gradient(90deg, var(--brand-blue) 0%, var(--brand-blue-light) 100%);
+}
+
+.brand-light-gradient {
+  background: linear-gradient(180deg, var(--brand-surface) 0%, var(--brand-surface-alt) 100%);
+}
+
+.brand-about-gradient {
+  background: linear-gradient(135deg, var(--brand-surface) 0%, var(--brand-surface-blue) 100%);
+}
+
+.brand-hero-overlay {
+  background: linear-gradient(
+    135deg,
+    var(--brand-hero-navy-overlay) 0%,
+    var(--brand-hero-blue-overlay) 100%
+  );
+}
+
+.brand-clients-gradient {
+  background: linear-gradient(180deg, var(--brand-surface) 0%, var(--brand-surface-soft) 100%);
+}
+
+.brand-photo-overlay {
+  background: linear-gradient(
+    135deg,
+    var(--brand-photo-navy-strong) 0%,
+    var(--brand-photo-navy) 55%,
+    var(--brand-photo-blue) 100%
+  );
+}
+
+.brand-footer-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--brand-deep-navy) 0%,
+    var(--brand-footer) 55%,
+    var(--brand-footer-deep) 100%
+  );
 }
 
 body {
