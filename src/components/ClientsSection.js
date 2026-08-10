@@ -2,25 +2,24 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 
 const clientLogos = [
-  "kz6ioaghyw3kmkvwz7yk.jpg",
-  "maikqfdco0mdqzdes9rk.jpg",
+  "kz6ioaghyw3kmkvwz7yk.png",
+  "maikqfdco0mdqzdes9rk.png",
   "nmbmqpznqsnxkomctlcq.png",
-  "nw93zb4qxwurzf7ft3xh.jpg",
-  "os8tcp9nik7wsad6ue14.jpg",
+  "nw93zb4qxwurzf7ft3xh.png",
+  "os8tcp9nik7wsad6ue14.png",
   "oxxaqqf8bnu3fsesyaik.png",
-  "qji75vzy0hugwukj6pqk.jpg",
-  "qufzwby9ewkq3wxg4spa.jpg",
+  "qji75vzy0hugwukj6pqk.png",
+  "qufzwby9ewkq3wxg4spa.png",
   "rukhngiy5u7svcw7mrw5.png",
   "tkhe4seypxp6rnfhzevq.png",
   "udm67fgb1gepoojgoaaw.png",
-  "xfzma5xqnnbx5xhfjszd.jpg",
-  "xwebvnwgflzm1gcmlhek.jpg",
-  "yemqrqcwtcoxyxytubtv.jpg",
-  "zjraydlxceah8cbwedzd.jpg",
+  "xfzma5xqnnbx5xhfjszd.png",
+  "xwebvnwgflzm1gcmlhek.png",
+  "yemqrqcwtcoxyxytubtv.png",
+  "zjraydlxceah8cbwedzd.png",
 ];
 
 const groupLogos = (size) =>
@@ -29,17 +28,18 @@ const groupLogos = (size) =>
   );
 
 const tabletLogoGroups = groupLogos(3);
-const desktopLogoGroups = groupLogos(5);
+const desktopVisibleCount = 5;
+const desktopMaxIndex = Math.max(clientLogos.length - desktopVisibleCount, 0);
 
 function LogoCard({ logo, index }) {
   return (
-    <div className="group flex h-28 items-center justify-center border border-[#00132d]/10 bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[#17E9E5] hover:shadow-[0_10px_24px_rgba(0,19,45,0.1)] sm:h-32">
+    <div className="flex h-36 items-center justify-center p-2 sm:h-40 sm:p-3 lg:h-48 lg:p-4">
       <Image
         src={`/Client/${logo}`}
         alt={`Logo mitra Sebisa Project ${index + 1}`}
-        width={220}
-        height={140}
-        className="h-full w-full object-contain grayscale opacity-65 transition duration-300 group-hover:grayscale-0 group-hover:opacity-100"
+        width={320}
+        height={240}
+        className="h-full w-full object-contain opacity-75"
       />
     </div>
   );
@@ -61,19 +61,13 @@ export default function ClientsSection() {
   useEffect(() => {
     const interval = window.setInterval(() => {
       setActiveTabletGroup((current) => (current + 1) % tabletLogoGroups.length);
-      setActiveDesktopGroup((current) => (current + 1) % desktopLogoGroups.length);
+      setActiveDesktopGroup((current) =>
+        current >= desktopMaxIndex ? 0 : current + 1,
+      );
     }, 4200);
 
     return () => window.clearInterval(interval);
   }, []);
-
-  const showPreviousLogo = () => {
-    setActiveLogo((current) => (current - 1 + clientLogos.length) % clientLogos.length);
-  };
-
-  const showNextLogo = () => {
-    setActiveLogo((current) => (current + 1) % clientLogos.length);
-  };
 
   return (
     <section
@@ -102,7 +96,7 @@ export default function ClientsSection() {
         </motion.div>
 
         <div className="mt-10 sm:hidden">
-          <div className="relative overflow-hidden border border-[#00132d]/10 bg-white px-12 py-8">
+          <div className="relative overflow-hidden px-12 py-8">
             <div
               className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${activeLogo * 100}%)` }}
@@ -114,38 +108,11 @@ export default function ClientsSection() {
                     alt={`Logo mitra Sebisa Project ${index + 1}`}
                     width={260}
                     height={150}
-                    className="h-32 w-full object-contain"
+                    className="h-40 w-full object-contain"
                   />
                 </div>
               ))}
             </div>
-            <button
-              aria-label="Logo mitra sebelumnya"
-              className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center border border-[#00132d]/15 text-[#00132d] transition hover:border-[#17E9E5] hover:text-[#00AFC1]"
-              type="button"
-              onClick={showPreviousLogo}
-            >
-              <FaChevronLeft aria-hidden="true" />
-            </button>
-            <button
-              aria-label="Logo mitra berikutnya"
-              className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center border border-[#00132d]/15 text-[#00132d] transition hover:border-[#17E9E5] hover:text-[#00AFC1]"
-              type="button"
-              onClick={showNextLogo}
-            >
-              <FaChevronRight aria-hidden="true" />
-            </button>
-          </div>
-          <div className="mt-4 flex justify-center gap-1.5" aria-label="Pilih logo mitra">
-            {clientLogos.map((logo, index) => (
-              <button
-                aria-label={`Tampilkan logo mitra ${index + 1}`}
-                className={`h-1.5 transition-all ${index === activeLogo ? "w-6 bg-[#00AFC1]" : "w-1.5 bg-[#00132d]/20"}`}
-                key={logo}
-                type="button"
-                onClick={() => setActiveLogo(index)}
-              />
-            ))}
           </div>
         </div>
 
@@ -169,14 +136,12 @@ export default function ClientsSection() {
         <div className="mt-10 hidden lg:block">
           <div className="overflow-hidden">
             <div
-              className="flex transition-transform duration-700 ease-out"
-              style={{ transform: `translateX(-${activeDesktopGroup * 100}%)` }}
+              className="flex transition-transform duration-1000 ease-out"
+              style={{ transform: `translateX(-${activeDesktopGroup * (100 / desktopVisibleCount)}%)` }}
             >
-              {desktopLogoGroups.map((group, groupIndex) => (
-                <div className="grid min-w-full grid-cols-5 gap-4" key={`desktop-${groupIndex}`}>
-                  {group.map((logo, logoIndex) => (
-                    <LogoCard key={logo} logo={logo} index={groupIndex * 5 + logoIndex} />
-                  ))}
+              {clientLogos.map((logo, logoIndex) => (
+                <div className="min-w-[20%] px-2" key={`desktop-${logo}`}>
+                  <LogoCard logo={logo} index={logoIndex} />
                 </div>
               ))}
             </div>

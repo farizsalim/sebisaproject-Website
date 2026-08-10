@@ -17,8 +17,8 @@ export default function Home() {
       <ConsultationSection />
       <ServicesSection />
       <ClientsSection />
-      <AboutSection />
       <CaseStudySection />
+      <AboutSection />
       <FaqSection />
       <FinalCtaSection />
       <Footer />

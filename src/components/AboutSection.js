@@ -10,10 +10,8 @@ export default function AboutSection() {
   return (
     <section
       id="tentang-kami"
-      className="relative overflow-hidden bg-[#00132d] bg-cover bg-center px-4 py-14 text-white [content-visibility:auto] [contain-intrinsic-size:800px] [font-family:Arial,sans-serif] sm:px-6 sm:py-24 lg:px-8"
-      style={{ backgroundImage: "url('/images/Portofolio.png')" }}
+      className="relative overflow-hidden bg-[#f7f9fc] px-4 py-14 text-[#00132d] [content-visibility:auto] [contain-intrinsic-size:800px] [font-family:Arial,sans-serif] sm:px-6 sm:py-24 lg:px-8"
     >
-      <div className="absolute inset-0 bg-[#00132d]/80" />
       <div className="absolute inset-x-0 top-0 z-10 h-1 bg-[linear-gradient(90deg,#17E9E5_0%,#FBCD2F_50%,#DF00A8_100%)]" />
       <div className="relative z-10 mx-auto grid max-w-[1240px] items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
         <motion.div
@@ -28,7 +26,7 @@ export default function AboutSection() {
           <h2 className="max-w-3xl text-3xl font-black leading-[1.08] sm:text-5xl">
             Perusahaan Penyedia Jasa Digital Profesional Bergaransi
           </h2>
-          <div className="mt-6 max-w-2xl space-y-4 text-sm leading-7 text-white/70 sm:mt-8 sm:text-base">
+          <div className="mt-6 max-w-2xl space-y-4 text-sm leading-7 text-slate-600 sm:mt-8 sm:text-base">
             <p>
               Sebisa Project adalah partner kreatif dan strategis untuk membantu
               bisnis, brand, dan personal brand tumbuh lebih kuat di era digital.
@@ -58,14 +56,14 @@ export default function AboutSection() {
             {isExpanded ? "Sembunyikan" : "Baca selengkapnya"}
           </button>
           {isExpanded ? (
-            <p className="mt-7 border-l-4 border-[#FBCD2F] pl-4 text-base font-black leading-6 text-white sm:text-lg">
+            <p className="mt-7 border-l-4 border-[#FBCD2F] pl-4 text-base font-black leading-6 text-[#00132d] sm:text-lg">
               Dari Ide Menjadi Realita, Dari Strategi Menjadi Hasil.
             </p>
           ) : null}
         </motion.div>
 
         <motion.div
-          className="relative min-h-[360px] overflow-hidden bg-[#00264d] p-5 sm:min-h-[480px] sm:p-8"
+          className="relative min-h-[360px] overflow-hidden bg-[#e5eef5] p-5 sm:min-h-[480px] sm:p-8"
           initial={{ opacity: 0, x: 28, scale: 0.97 }}
           whileInView={{ opacity: 1, x: 0, scale: 1 }}
           viewport={{ once: false, amount: 0.2 }}
@@ -73,8 +71,8 @@ export default function AboutSection() {
         >
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full border-[28px] border-[#17E9E5]/15" />
           <div className="absolute -bottom-24 -left-20 h-64 w-64 rounded-full border-[28px] border-[#FBCD2F]/20" />
-          <div className="absolute inset-5 border border-white/15 sm:inset-8" />
-          <div className="relative flex h-full min-h-[320px] flex-col items-center justify-center bg-[#00132d] p-8 sm:min-h-[416px]">
+          <div className="absolute inset-5 border border-[#00132d]/15 sm:inset-8" />
+            <div className="relative flex h-full min-h-[320px] flex-col items-center justify-center bg-white p-8 sm:min-h-[416px]">
             <Image
               src="/images/logo-sebisa-project.png"
               alt="Logo Sebisa Project"
@@ -83,7 +81,7 @@ export default function AboutSection() {
               className="h-auto w-full max-w-[300px] object-contain"
               priority={false}
             />
-            <span className="mt-8 border border-white/20 px-4 py-2 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-white/65">
+            <span className="mt-8 border border-[#00132d]/20 px-4 py-2 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-[#00132d]/65">
               Partner kreatif dan strategis
             </span>
           </div>
