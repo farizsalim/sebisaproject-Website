@@ -23,8 +23,8 @@ export default function Navbar() {
     <nav
       className={`sticky top-0 z-50 w-full border-b transition-all duration-300 [font-family:Arial,sans-serif] ${
         isScrolled || isMenuOpen
-          ? "border-white/15 bg-[#00132d]/95 shadow-lg backdrop-blur-md"
-          : "border-transparent bg-transparent shadow-none"
+          ? "border-white/15 bg-[#06466B]/95 shadow-lg backdrop-blur-md"
+          : "border-white/10 bg-[#06466B]/90 shadow-md backdrop-blur-md"
       }`}
     >
       <div className="mx-auto flex min-h-[72px] w-full max-w-[1240px] items-center justify-between gap-4 px-4 py-2 sm:min-h-[82px] sm:px-6 sm:py-3 lg:px-0">
@@ -42,40 +42,52 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-6 text-[16px] font-normal text-white lg:flex">
           <ScrollLink
-            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
+            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#81CEEF] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#81CEEF] hover:after:w-full"
             href="#"
           >
             Beranda
           </ScrollLink>
           <ScrollLink
-            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
+            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#81CEEF] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#81CEEF] hover:after:w-full"
             href="#tentang-kami"
           >
             Tentang Kami
           </ScrollLink>
           <ScrollLink
-            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
+            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#81CEEF] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#81CEEF] hover:after:w-full"
             href="#layanan"
           >
             Layanan
           </ScrollLink>
           <ScrollLink
-            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
+            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#81CEEF] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#81CEEF] hover:after:w-full"
             href="#mitra"
           >
             Mitra
           </ScrollLink>
           <ScrollLink
-            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#17E9E5] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#17E9E5] hover:after:w-full"
+            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#81CEEF] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#81CEEF] hover:after:w-full"
             href="#studi-kasus"
           >
             Kisah
           </ScrollLink>
+          <Link
+            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#81CEEF] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#81CEEF] hover:after:w-full"
+            href="/tim"
+          >
+            Our Teams
+          </Link>
+          <Link
+            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-[#81CEEF] after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-[#81CEEF] hover:after:w-full"
+            href="/karir"
+          >
+            Karir
+          </Link>
         </div>
 
         <div className="hidden shrink-0 items-center gap-4 lg:flex">
           <ScrollLink
-            className="bg-[#FBCD2F] px-5 py-3 text-[15px] text-[#00132d] transition-colors hover:bg-white font-bold"
+            className="border-2 border-[#06466B] bg-[#FF7A18] px-5 py-3 text-[13px] font-black uppercase tracking-[0.08em] text-[#06466B] shadow-[3px_3px_0_#F51686] transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-[5px_5px_0_#F51686]"
             href="#konsultasi"
           >
             Mulai Konsultasi
@@ -85,7 +97,7 @@ export default function Navbar() {
         <button
           aria-expanded={isMenuOpen}
           aria-label={isMenuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
-          className="flex h-11 w-11 shrink-0 items-center justify-center border border-white/40 text-white lg:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center border-2 border-white/70 text-white transition hover:border-[#F51686] hover:bg-[#F51686] lg:hidden"
           type="button"
           onClick={() => setIsMenuOpen((open) => !open)}
         >
@@ -97,14 +109,16 @@ export default function Navbar() {
         </button>
       </div>
       {isMenuOpen ? (
-        <div className="absolute left-0 right-0 top-full border-t border-white/15 bg-[#00132d]/95 px-4 py-4 shadow-lg backdrop-blur-md lg:hidden">
+        <div className="absolute left-0 right-0 top-full border-t border-white/15 bg-[#06466B]/95 px-4 py-4 shadow-lg backdrop-blur-md lg:hidden">
           <div className="mx-auto flex max-w-[1240px] flex-col gap-1 text-sm font-bold text-white">
-            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#" onClick={closeMenu}>Beranda</ScrollLink>
-            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#tentang-kami" onClick={closeMenu}>Tentang Kami</ScrollLink>
-            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#layanan" onClick={closeMenu}>Layanan</ScrollLink>
-            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#mitra" onClick={closeMenu}>Mitra</ScrollLink>
-            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#17E9E5]" href="#studi-kasus" onClick={closeMenu}>Kisah</ScrollLink>
-            <ScrollLink className="mt-2 bg-[#FBCD2F] px-3 py-3 text-center text-[#00132d]" href="#konsultasi" onClick={closeMenu}>Mulai Konsultasi</ScrollLink>
+            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#81CEEF]" href="#" onClick={closeMenu}>Beranda</ScrollLink>
+            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#81CEEF]" href="#tentang-kami" onClick={closeMenu}>Tentang Kami</ScrollLink>
+            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#81CEEF]" href="#layanan" onClick={closeMenu}>Layanan</ScrollLink>
+            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#81CEEF]" href="#mitra" onClick={closeMenu}>Mitra</ScrollLink>
+            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-[#81CEEF]" href="#studi-kasus" onClick={closeMenu}>Kisah</ScrollLink>
+            <Link className="px-3 py-3 hover:bg-white/10 hover:text-[#81CEEF]" href="/tim" onClick={closeMenu}>Our Teams</Link>
+            <Link className="px-3 py-3 hover:bg-white/10 hover:text-[#81CEEF]" href="/karir" onClick={closeMenu}>Karir</Link>
+            <ScrollLink className="mt-2 border-2 border-[#06466B] bg-[#FF7A18] px-3 py-3 text-center font-black uppercase tracking-[0.08em] text-[#06466B] shadow-[3px_3px_0_#F51686] transition hover:bg-white" href="#konsultasi" onClick={closeMenu}>Mulai Konsultasi</ScrollLink>
           </div>
         </div>
       ) : null}

@@ -1,12 +1,35 @@
 @import "tailwindcss";
 
+@keyframes clients-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.clients-marquee {
+  animation: clients-marquee 36s linear infinite;
+}
+
+.clients-marquee:hover {
+  animation-play-state: paused;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #06466b;
+  --brand-blue: #21bcfb;
+  --brand-blue-light: #81ceef;
+  --brand-deep-navy: #06466b;
+  --brand-surface: #f4fbfe;
+  --brand-hot-pink: #f51686;
+  --brand-orange: #ff7a18;
 }
 
 @theme inline {
@@ -14,6 +37,12 @@ html {
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-light: var(--brand-blue-light);
+  --color-deep-navy: var(--brand-deep-navy);
+  --color-brand-surface: var(--brand-surface);
+  --color-hot-pink: var(--brand-hot-pink);
+  --color-orange: var(--brand-orange);
 }
 
 @media (prefers-color-scheme: dark) {
