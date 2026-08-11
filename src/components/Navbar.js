@@ -41,12 +41,12 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden items-center gap-6 text-[16px] font-normal text-white lg:flex">
-          <ScrollLink
+          <Link
             className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-brand-blue-light after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-brand-blue-light hover:after:w-full"
-            href="#"
+            href="/"
           >
             Beranda
-          </ScrollLink>
+          </Link>
           <ScrollLink
             className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-brand-blue-light after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-brand-blue-light hover:after:w-full"
             href="#tentang-kami"
@@ -77,12 +77,6 @@ export default function Navbar() {
           >
             Our Teams
           </Link>
-          <Link
-            className="relative transition-all duration-200 after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:bg-brand-blue-light after:transition-all after:duration-200 hover:-translate-y-0.5 hover:text-brand-blue-light hover:after:w-full"
-            href="/karir"
-          >
-            Karir
-          </Link>
         </div>
 
         <div className="hidden shrink-0 items-center gap-4 lg:flex">
@@ -111,13 +105,12 @@ export default function Navbar() {
       {isMenuOpen ? (
         <div className="absolute left-0 right-0 top-full border-t border-white/15 bg-deep-navy/95 px-4 py-4 shadow-lg backdrop-blur-md lg:hidden">
           <div className="mx-auto flex max-w-[1240px] flex-col gap-1 text-sm font-bold text-white">
-            <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-brand-blue-light" href="#" onClick={closeMenu}>Beranda</ScrollLink>
+            <Link className="px-3 py-3 hover:bg-white/10 hover:text-brand-blue-light" href="/" onClick={closeMenu}>Beranda</Link>
             <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-brand-blue-light" href="#tentang-kami" onClick={closeMenu}>Tentang Kami</ScrollLink>
             <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-brand-blue-light" href="#layanan" onClick={closeMenu}>Layanan</ScrollLink>
             <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-brand-blue-light" href="#mitra" onClick={closeMenu}>Mitra</ScrollLink>
             <ScrollLink className="px-3 py-3 hover:bg-white/10 hover:text-brand-blue-light" href="#studi-kasus" onClick={closeMenu}>Kisah</ScrollLink>
             <Link className="px-3 py-3 hover:bg-white/10 hover:text-brand-blue-light" href="/tim" onClick={closeMenu}>Our Teams</Link>
-            <Link className="px-3 py-3 hover:bg-white/10 hover:text-brand-blue-light" href="/karir" onClick={closeMenu}>Karir</Link>
             <ScrollLink className="mt-2 border-2 border-deep-navy bg-orange px-3 py-3 text-center font-black uppercase tracking-[0.08em] text-deep-navy shadow-[3px_3px_0_var(--brand-hot-pink)] transition hover:bg-white" href="#konsultasi" onClick={closeMenu}>Mulai Konsultasi</ScrollLink>
           </div>
         </div>

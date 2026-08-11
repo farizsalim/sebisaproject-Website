@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { FaArrowRight, FaGraduationCap, FaUsers } from "react-icons/fa6";
+import { FaArrowRight, FaUsers } from "react-icons/fa6";
 import { useState } from "react";
 
 export default function AboutSection() {
@@ -67,14 +67,6 @@ export default function AboutSection() {
             >
               <FaUsers aria-hidden="true" />
               Kenalan dengan tim kami
-              <FaArrowRight className="ml-auto text-brand-blue" aria-hidden="true" />
-            </Link>
-            <Link
-              className="inline-flex min-h-12 items-center gap-3 border-2 border-deep-navy bg-white px-5 py-3 text-sm font-black text-deep-navy shadow-[3px_3px_0_var(--brand-blue-light)] transition hover:-translate-y-0.5 hover:border-hot-pink hover:text-hot-pink"
-              href="/karir"
-            >
-              <FaGraduationCap aria-hidden="true" />
-              Lihat program magang
               <FaArrowRight className="ml-auto text-brand-blue" aria-hidden="true" />
             </Link>
           </div>
