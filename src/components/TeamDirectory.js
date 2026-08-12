@@ -5,6 +5,8 @@ import Image from "next/image";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
 
+const TEAM_IMAGE_VERSION = "20260811";
+
 function getInitials(name) {
   return name
     .split(" ")
@@ -18,10 +20,10 @@ function getInitials(name) {
 function MemberCard({ member, index }) {
   return (
     <article className="group relative overflow-hidden border-2 border-deep-navy/15 bg-white p-4 text-deep-navy shadow-[4px_4px_0_rgba(33,188,251,0.45)] transition duration-200 hover:-translate-y-1 hover:border-orange hover:shadow-[6px_6px_0_var(--brand-hot-pink)]">
-      <div className="relative mb-4 h-48 overflow-hidden border-2 border-deep-navy/10 bg-brand-surface-alt">
+      <div className="relative mb-4 aspect-square overflow-hidden border-2 border-deep-navy/10 bg-brand-surface-alt">
         {member.image ? (
           <Image
-            src={member.image}
+            src={`${member.image}?v=${TEAM_IMAGE_VERSION}`}
             alt={`Foto ${member.name}`}
             fill
             sizes="(max-width: 640px) 86vw, (max-width: 1024px) 310px, 340px"
@@ -44,6 +46,9 @@ function MemberCard({ member, index }) {
           <h3 className="mt-1 text-sm font-black leading-tight sm:text-base">
             {member.name}
           </h3>
+          <p className="mt-2 text-xs leading-5 text-slate-600">
+            {member.description}
+          </p>
         </div>
       </div>
     </article>

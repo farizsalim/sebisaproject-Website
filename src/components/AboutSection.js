@@ -4,10 +4,37 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { FaArrowRight, FaUsers } from "react-icons/fa6";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const TEAM_IMAGE_VERSION = "20260811";
+
+function getInitials(name) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+}
 
 export default function AboutSection() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [teamPreview, setTeamPreview] = useState([]);
+
+  useEffect(() => {
+    const loadTeamPreview = async () => {
+      try {
+        const response = await fetch("/data/team.json");
+        const teams = await response.json();
+        setTeamPreview(teams.flatMap((team) => team.members));
+      } catch {
+        setTeamPreview([]);
+      }
+    };
+
+    loadTeamPreview();
+  }, []);
 
   return (
     <section
@@ -60,16 +87,6 @@ export default function AboutSection() {
             <p className="mt-7 border-l-4 border-orange pl-4 text-base font-black leading-6 text-deep-navy sm:text-lg">
             Dari Ide Menjadi Realita, Dari Strategi Menjadi Hasil.
           </p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link
-              className="inline-flex min-h-12 items-center gap-3 border-2 border-deep-navy bg-white px-5 py-3 text-sm font-black text-deep-navy shadow-[3px_3px_0_var(--brand-blue-light)] transition hover:-translate-y-0.5 hover:border-hot-pink hover:text-hot-pink"
-              href="/tim"
-            >
-              <FaUsers aria-hidden="true" />
-              Kenalan dengan tim kami
-              <FaArrowRight className="ml-auto text-brand-blue" aria-hidden="true" />
-            </Link>
-          </div>
         </motion.div>
 
         <motion.div
@@ -101,6 +118,48 @@ export default function AboutSection() {
             </div>
           </div>
         </motion.div>
+      </div>
+      {teamPreview.length > 0 ? (
+        <div className="relative z-10 mx-auto mt-14 max-w-[1240px] overflow-hidden border-y border-deep-navy/10 py-7 sm:mt-20">
+          <p className="mb-5 text-center text-xs font-black uppercase tracking-[0.22em] text-deep-navy/70">
+            Orang-orang di balik Sebisa Project
+          </p>
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[var(--brand-surface)] to-transparent sm:w-28" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[var(--brand-surface)] to-transparent sm:w-28" />
+            <div className="about-team-marquee flex w-max gap-5 hover:[animation-play-state:paused] sm:gap-7">
+              {[...teamPreview, ...teamPreview].map((member, index) => (
+                <div className="w-[168px] shrink-0 sm:w-[232px]" key={`${member.name}-${index}`}>
+                  <div className="relative mx-auto h-40 w-40 overflow-hidden bg-brand-surface-alt sm:h-56 sm:w-56">
+                    {member.image ? (
+                      <Image
+                        src={`${member.image}?v=${TEAM_IMAGE_VERSION}`}
+                        alt={`Foto ${member.name}`}
+                        fill
+                        sizes="224px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center bg-brand-blue-light text-lg font-black text-deep-navy">
+                        {getInitials(member.name)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+      <div className="relative z-10 mt-8 flex justify-center sm:mt-10">
+        <Link
+          className="inline-flex min-h-12 items-center gap-3 border-2 border-deep-navy bg-white px-5 py-3 text-sm font-black text-deep-navy shadow-[3px_3px_0_var(--brand-blue-light)] transition hover:-translate-y-0.5 hover:border-hot-pink hover:text-hot-pink"
+          href="/tim"
+        >
+          <FaUsers aria-hidden="true" />
+          Kenali lebih dekat
+          <FaArrowRight className="ml-auto text-brand-blue" aria-hidden="true" />
+        </Link>
       </div>
     </section>
   );

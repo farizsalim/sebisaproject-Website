@@ -4,13 +4,80 @@ import axios from "axios";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
+import { FaArrowLeft, FaArrowRight, FaInstagram, FaXmark } from "react-icons/fa6";
+
+const caseSlideVariants = {
+  enter: (direction) => ({
+    opacity: 0,
+    x: direction * 90,
+  }),
+  center: {
+    opacity: 1,
+    x: 0,
+  },
+  exit: (direction) => ({
+    opacity: 0,
+    x: direction * -90,
+  }),
+};
+
+function SideCaseCard({ caseStudy, side, onClick }) {
+  const media = caseStudy.media.slice(0, 5);
+
+  return (
+    <motion.button
+      className={`absolute ${side === "left" ? "-left-[30%]" : "-right-[30%]"} top-1/2 z-0 hidden aspect-[4/3] w-[28%] -translate-y-1/2 overflow-hidden border-2 border-brand-blue/70 bg-deep-navy p-1 text-left transition hover:border-orange lg:block`}
+      type="button"
+      aria-label={`Buka ${caseStudy.client}`}
+      onClick={onClick}
+      initial={{ opacity: 0, x: side === "left" ? 70 : -70 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: side === "left" ? 70 : -70 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className="flex h-full flex-col border border-brand-blue/50 bg-deep-navy p-1.5">
+        <div className="flex items-start justify-between gap-1 border-b border-white/20 pb-1.5">
+          <div className="min-w-0">
+            <span className="block text-[6px] font-black uppercase tracking-[0.18em] text-brand-blue-light">
+              Portofolio
+            </span>
+            <span className="mt-0.5 block truncate text-[10px] font-black uppercase text-white">
+              {caseStudy.client}
+            </span>
+          </div>
+          <span className="shrink-0 border border-orange px-1 py-0.5 text-[5px] font-black uppercase text-orange">
+            Detail
+          </span>
+        </div>
+        <div className="mt-1 grid min-h-0 flex-1 grid-cols-4 grid-rows-2 gap-0.5">
+          {media.map((item, index) => (
+            <div
+              key={`${caseStudy.id}-side-${item.src}`}
+              className={`relative min-h-0 overflow-hidden border border-hot-pink/50 ${index === 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1"}`}
+            >
+              {item.type === "video" ? (
+                <video className="h-full w-full object-cover" src={item.src} muted preload="none" />
+              ) : (
+                <Image src={item.src} alt="" fill sizes="12vw" className="object-cover" />
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center justify-between border-t border-white/20 pt-1.5 text-[6px] font-black uppercase tracking-[0.08em]">
+          <span className="truncate text-brand-blue-light">Instagram client</span>
+          <span className="ml-1 h-1 w-3 shrink-0 bg-orange" />
+        </div>
+      </div>
+    </motion.button>
+  );
+}
 
 export default function CaseStudySection() {
   const [caseStudies, setCaseStudies] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+  const [slideDirection, setSlideDirection] = useState(1);
   const [isIntroExpanded, setIsIntroExpanded] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -30,13 +97,18 @@ export default function CaseStudySection() {
   }, []);
 
   const activeCase = caseStudies[activeIndex];
-
+  const previousCase = caseStudies.length > 1
+    ? caseStudies[(activeIndex - 1 + caseStudies.length) % caseStudies.length]
+    : null;
+  const nextCase = caseStudies.length > 1
+    ? caseStudies[(activeIndex + 1) % caseStudies.length]
+    : null;
   useEffect(() => {
     if (caseStudies.length < 2) return undefined;
 
     const caseTimer = window.setInterval(() => {
+      setSlideDirection(1);
       setActiveIndex((currentIndex) => (currentIndex + 1) % caseStudies.length);
-      setIsDetailsExpanded(false);
     }, 20000);
 
     return () => window.clearInterval(caseTimer);
@@ -50,12 +122,16 @@ export default function CaseStudySection() {
         : nextIndex >= caseStudies.length
           ? 0
           : nextIndex,
+      direction,
     );
   };
 
-  const selectCase = (nextIndex) => {
+  const selectCase = (nextIndex, direction = nextIndex >= activeIndex ? 1 : -1) => {
+    if (nextIndex === activeIndex) return;
+
+    setSlideDirection(direction);
     setActiveIndex(nextIndex);
-    setIsDetailsExpanded(false);
+    setIsDetailsOpen(false);
   };
 
   const handleCaseSwipe = (_, info) => {
@@ -64,9 +140,7 @@ export default function CaseStudySection() {
     changeCase(info.offset.x < 0 ? 1 : -1);
   };
 
-  const visibleMedia = activeCase
-    ? activeCase.media.slice(0, 3)
-    : [];
+  const visibleMedia = activeCase?.media.slice(0, 5) || [];
 
   return (
     <section
@@ -103,28 +177,6 @@ export default function CaseStudySection() {
               {isIntroExpanded ? "Sembunyikan" : "Baca selengkapnya"}
             </button>
           </div>
-          <div className="hidden shrink-0 gap-2 lg:flex">
-            <button
-              aria-label="Studi kasus sebelumnya"
-              className="flex h-11 w-11 items-center justify-center border-2 border-hot-pink text-white transition hover:border-orange hover:bg-orange hover:text-deep-navy"
-              title="Studi kasus sebelumnya"
-              type="button"
-              onClick={() => changeCase(-1)}
-              disabled={caseStudies.length < 2}
-            >
-              <FaArrowLeft aria-hidden="true" />
-            </button>
-            <button
-              aria-label="Studi kasus berikutnya"
-              className="flex h-11 w-11 items-center justify-center border-2 border-hot-pink text-white transition hover:border-orange hover:bg-orange hover:text-deep-navy"
-              title="Studi kasus berikutnya"
-              type="button"
-              onClick={() => changeCase(1)}
-              disabled={caseStudies.length < 2}
-            >
-              <FaArrowRight aria-hidden="true" />
-            </button>
-          </div>
         </motion.div>
 
         {isLoading ? (
@@ -133,89 +185,84 @@ export default function CaseStudySection() {
           <p className="py-16 text-orange">{error}</p>
         ) : activeCase ? (
           <>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={activeCase.id}
-              className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-14"
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.12 }}
-              exit={{ opacity: 0, x: -24 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.12}
-              onDragEnd={handleCaseSwipe}
-            >
-            <div>
-              <p className="inline-flex items-center border-l-4 border-orange bg-brand-blue/15 px-3 py-2 text-sm font-black tracking-[0.04em] text-white sm:text-base">
-                {activeCase.eyebrow}
-              </p>
-              <h3 className="mt-3 min-h-[2.24em] max-w-2xl line-clamp-2 text-xl font-black leading-[1.12] sm:mt-4 sm:min-h-[2.4em] sm:text-3xl sm:leading-tight lg:text-4xl">
-                {activeCase.title}
-              </h3>
-              <p className={`${isDetailsExpanded ? "" : "line-clamp-2"} mt-3 max-w-xl text-xs leading-5 text-white/90 sm:mt-5 sm:text-base sm:leading-7`}>
-                {activeCase.description}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.1em] sm:mt-8 sm:gap-3 sm:text-xs sm:tracking-[0.12em]">
-                <span className="border border-white/25 px-3 py-2 text-white/80">
+          <div className="relative mx-auto min-h-[430px] w-full max-w-[620px] sm:min-h-[400px]">
+              <AnimatePresence initial={false} custom={slideDirection}>
+                {previousCase ? (
+                  <SideCaseCard
+                    key={`previous-${previousCase.id}`}
+                    caseStudy={previousCase}
+                    side="left"
+                    onClick={() => changeCase(-1)}
+                  />
+                ) : null}
+                {nextCase ? (
+                  <SideCaseCard
+                    key={`next-${nextCase.id}`}
+                    caseStudy={nextCase}
+                    side="right"
+                    onClick={() => changeCase(1)}
+                  />
+                ) : null}
+              </AnimatePresence>
+              <button
+                aria-label="Studi kasus sebelumnya"
+                className="absolute -left-14 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center border-2 border-hot-pink bg-deep-navy text-white transition hover:border-orange hover:bg-orange hover:text-deep-navy disabled:opacity-40 lg:flex"
+                title="Studi kasus sebelumnya"
+                type="button"
+                onClick={() => changeCase(-1)}
+                disabled={caseStudies.length < 2}
+              >
+                <FaArrowLeft aria-hidden="true" />
+              </button>
+              <button
+                aria-label="Studi kasus berikutnya"
+                className="absolute -right-14 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center border-2 border-hot-pink bg-deep-navy text-white transition hover:border-orange hover:bg-orange hover:text-deep-navy disabled:opacity-40 lg:flex"
+                title="Studi kasus berikutnya"
+                type="button"
+                onClick={() => changeCase(1)}
+                disabled={caseStudies.length < 2}
+              >
+                <FaArrowRight aria-hidden="true" />
+              </button>
+            <AnimatePresence mode="sync" initial={false} custom={slideDirection}>
+              <motion.div
+                key={activeCase.id}
+                custom={slideDirection}
+                variants={caseSlideVariants}
+                className="absolute inset-x-0 top-0 z-10 overflow-hidden border-2 border-brand-blue/60 bg-deep-navy/95 p-2 shadow-[4px_4px_0_var(--brand-hot-pink)] backdrop-blur-sm sm:p-3"
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.12}
+                onDragEnd={handleCaseSwipe}
+              >
+            <div className="flex items-end justify-between gap-3 px-1 pb-3 sm:px-2 sm:pb-4">
+              <div className="min-w-0">
+                <p className="mb-1 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-brand-blue-light sm:text-[10px]">
+                  <span className="h-1.5 w-1.5 bg-orange" aria-hidden="true" />
+                  Portofolio
+                </p>
+                <h3 className="border-l-4 border-orange pl-2 text-xl font-black leading-tight sm:text-2xl">
                   {activeCase.client}
-                </span>
-                <span className="bg-orange px-3 py-2 text-deep-navy">
-                  {activeCase.result}
-                </span>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2 sm:mt-8 sm:block sm:space-y-3">
-                {activeCase.services.map((service) => (
-                  service.href ? (
-                    <a
-                      key={service.label}
-                      className="block border border-brand-blue/40 px-3 py-2 transition hover:border-orange sm:border-0 sm:border-l-2 sm:px-0 sm:py-0 sm:pl-4"
-                      href={service.href}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <p className="text-sm font-bold text-white">{service.label}</p>
-                      <p className={`${isDetailsExpanded ? "block" : "hidden"} mt-1 text-sm leading-6 text-white/85`}>{service.description}</p>
-                    </a>
-                  ) : (
-                    <div key={service.label} className="border border-brand-blue/40 px-3 py-2 sm:border-0 sm:border-l-2 sm:px-0 sm:py-0 sm:pl-4">
-                      <p className="text-sm font-bold text-white">{service.label}</p>
-                      <p className={`${isDetailsExpanded ? "block" : "hidden"} mt-1 text-sm leading-6 text-white/85`}>{service.description}</p>
-                    </div>
-                  )
-                ))}
+                </h3>
               </div>
               <button
-                className="mt-4 text-xs font-bold text-brand-blue-light underline underline-offset-4 transition hover:text-orange"
+                className="shrink-0 border border-orange px-2 py-1.5 text-[9px] font-black uppercase tracking-[0.08em] text-orange transition hover:bg-orange hover:text-deep-navy sm:px-3 sm:py-2 sm:text-[10px]"
                 type="button"
-                aria-expanded={isDetailsExpanded}
-                onClick={() => setIsDetailsExpanded((expanded) => !expanded)}
+                onClick={() => setIsDetailsOpen(true)}
               >
-                {isDetailsExpanded ? "Sembunyikan detail" : "Baca selengkapnya"}
+                Selengkapnya
               </button>
-              <div className="mt-4 hidden items-center gap-2 sm:mt-8 sm:flex" aria-label="Posisi studi kasus">
-                {caseStudies.map((caseStudy, index) => (
-                  <button
-                    key={caseStudy.id}
-                    aria-label={`Buka ${caseStudy.eyebrow}`}
-                    aria-current={index === activeIndex ? "true" : undefined}
-                    className={`h-1.5 transition-all ${
-                      index === activeIndex ? "w-10 bg-orange" : "w-5 bg-hot-pink/60"
-                    }`}
-                    type="button"
-                    onClick={() => selectCase(index)}
-                  />
-                ))}
-              </div>
             </div>
 
-            <div className="grid h-[660px] grid-cols-1 grid-rows-3 gap-2 sm:h-[390px] sm:grid-cols-3 sm:grid-rows-1 sm:gap-3 lg:h-[460px]">
+            <div className="mx-auto grid aspect-[4/3] w-full max-w-[560px] grid-cols-2 grid-rows-3 gap-1.5 sm:aspect-[2/1] sm:grid-cols-4 sm:grid-rows-2 sm:gap-2">
               {visibleMedia.map((media, index) => (
                 <motion.div
                   key={`${activeCase.id}-${media.src}`}
-                  className="relative overflow-hidden border-2 border-hot-pink/60 bg-deep-navy shadow-[5px_5px_0_var(--brand-hot-pink)]"
+                  className={`group relative flex min-h-0 items-center justify-center overflow-hidden border-2 border-hot-pink/60 bg-deep-navy shadow-[2px_2px_0_rgb(243_161_55_/_45%)] ${index === 0 ? "row-span-2 sm:col-span-2 sm:row-span-2" : index === 1 ? "col-start-2 row-start-1 sm:col-start-3 sm:row-start-1" : index === 2 ? "col-start-2 row-start-2 sm:col-start-4 sm:row-start-1" : index === 3 ? "col-start-1 row-start-3 sm:col-start-3 sm:row-start-2" : "col-start-2 row-start-3 sm:col-start-4 sm:row-start-2"}`}
                   initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.45, delay: index * 0.06 }}
@@ -224,7 +271,7 @@ export default function CaseStudySection() {
                     <video
                       src={media.src}
                       aria-label={media.alt}
-                      className="absolute inset-0 h-full w-full object-cover"
+                      className="block h-full w-full object-cover"
                       autoPlay
                       loop
                       muted
@@ -232,34 +279,44 @@ export default function CaseStudySection() {
                       playsInline
                     />
                   ) : (
-                    <Image
+                    <img
                       src={media.src}
                       alt={media.alt}
-                      fill
-                      sizes={index === 0 ? "(max-width: 1024px) 65vw, 40vw" : "(max-width: 1024px) 35vw, 20vw"}
-                      className="object-cover"
+                      className="block h-full w-full object-cover"
                       style={{ objectPosition: media.position }}
                     />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-deep-navy/85 via-transparent to-transparent" />
-                  <div className="absolute inset-x-2 bottom-2 border-l-2 border-orange bg-deep-navy/85 p-2.5 text-white shadow-lg backdrop-blur-sm sm:inset-x-3 sm:bottom-3 sm:p-4">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-orange sm:text-[10px] sm:tracking-[0.14em]">
-                      {media.channel}
-                    </p>
-                    <p className="mt-1 text-[11px] font-bold leading-tight sm:text-sm">{media.caption}</p>
-                    {media.href ? (
-                      <a
-                        className="mt-1 inline-block text-[10px] font-bold text-brand-blue-light underline underline-offset-4 sm:mt-2 sm:text-xs"
-                        href={media.href}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Lihat platform
-                      </a>
-                    ) : null}
-                  </div>
+                  <div className="pointer-events-none absolute inset-0 border border-white/10 transition group-hover:border-white/35" />
                 </motion.div>
               ))}
+            </div>
+
+            <div className="mt-1 flex items-center justify-between gap-3 border-t border-white/15 px-1 pt-3 sm:px-2 sm:pt-4">
+              {activeCase.instagram ? (
+                <a
+                  className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.1em] text-brand-blue-light transition hover:text-orange sm:text-xs"
+                  href={activeCase.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <FaInstagram aria-hidden="true" className="text-base" />
+                  Instagram client
+                </a>
+              ) : <span />}
+              <div className="flex items-center gap-1.5" aria-label="Posisi studi kasus">
+                {caseStudies.map((caseStudy, index) => (
+                  <button
+                    key={caseStudy.id}
+                    aria-label={`Buka ${caseStudy.eyebrow}`}
+                    aria-current={index === activeIndex ? "true" : undefined}
+                    className={`h-1.5 transition-all ${
+                      index === activeIndex ? "w-8 bg-orange" : "w-3 bg-hot-pink/60"
+                    }`}
+                    type="button"
+                    onClick={() => selectCase(index)}
+                  />
+                ))}
+              </div>
             </div>
             <div className="flex items-center justify-between lg:hidden">
               <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/85">
@@ -286,11 +343,76 @@ export default function CaseStudySection() {
                 </button>
               </div>
             </div>
-            </motion.div>
-          </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
+          </div>
           </>
         ) : null}
       </div>
+
+      <AnimatePresence>
+        {isDetailsOpen && activeCase ? (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-deep-navy/85 p-4 backdrop-blur-sm sm:p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsDetailsOpen(false)}
+          >
+            <motion.div
+              className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto border-2 border-brand-blue bg-deep-navy p-5 text-white shadow-[5px_5px_0_var(--brand-hot-pink)] sm:p-8"
+              initial={{ opacity: 0, y: 18, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 18, scale: 0.97 }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button
+                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center border border-orange text-orange transition hover:bg-orange hover:text-deep-navy"
+                type="button"
+                aria-label="Tutup detail studi kasus"
+                title="Tutup"
+                onClick={() => setIsDetailsOpen(false)}
+              >
+                <FaXmark aria-hidden="true" />
+              </button>
+              <p className="pr-12 text-xs font-black uppercase tracking-[0.2em] text-orange">
+                {activeCase.eyebrow}
+              </p>
+              <h3 className="mt-3 pr-12 text-3xl font-black leading-tight sm:text-4xl">
+                {activeCase.client}
+              </h3>
+              <p className="mt-5 text-sm leading-7 text-white/85 sm:text-base">
+                {activeCase.description}
+              </p>
+              <div className="mt-6 border-l-4 border-brand-blue px-4">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-brand-blue-light">
+                  Hasil
+                </p>
+                <p className="mt-1 text-lg font-bold">{activeCase.result}</p>
+              </div>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                {activeCase.services.map((service) => (
+                  <div key={service.label} className="border border-white/15 p-4">
+                    <p className="font-bold text-white">{service.label}</p>
+                    <p className="mt-2 text-sm leading-6 text-white/70">{service.description}</p>
+                  </div>
+                ))}
+              </div>
+              {activeCase.instagram ? (
+                <a
+                  className="mt-7 inline-flex items-center gap-2 border-2 border-brand-blue bg-brand-blue px-4 py-3 text-xs font-black uppercase tracking-[0.1em] text-deep-navy transition hover:border-orange hover:bg-orange"
+                  href={activeCase.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <FaInstagram aria-hidden="true" />
+                  Instagram client
+                </a>
+              ) : null}
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 }

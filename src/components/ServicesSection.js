@@ -17,6 +17,21 @@ import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import ScrollLink from "@/components/ScrollLink";
 
+function getTimeRemaining(deadline) {
+  const difference = Math.max(0, new Date(deadline).getTime() - Date.now());
+
+  return {
+    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((difference / (1000 * 60)) % 60),
+    seconds: Math.floor((difference / 1000) % 60),
+  };
+}
+
+function formatTime(value) {
+  return String(value).padStart(2, "0");
+}
+
 function getServiceIcons(serviceName) {
   const normalizedName = serviceName.toLowerCase();
 
@@ -40,6 +55,7 @@ export default function ServicesSection() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [timeRemaining, setTimeRemaining] = useState(null);
   const servicesRailRef = useRef(null);
 
   const scrollServices = (direction) => {
@@ -67,10 +83,31 @@ export default function ServicesSection() {
   const services = serviceGroups.flatMap((group) =>
     group.services.map((service) => ({ ...service, category: group.category })),
   );
+  const flashSaleDeadline = services.find((service) => service.flashSale)?.flashSaleEndsAt;
   const filteredServices =
     activeCategory === "all"
       ? services
+      : activeCategory === "flash-sale"
+        ? services.filter((service) => service.flashSale)
       : services.filter((service) => service.category === activeCategory);
+
+  useEffect(() => {
+    if (!flashSaleDeadline) return undefined;
+
+    const updateCountdown = () => setTimeRemaining(getTimeRemaining(flashSaleDeadline));
+    updateCountdown();
+    const countdownInterval = window.setInterval(updateCountdown, 1000);
+
+    return () => window.clearInterval(countdownInterval);
+  }, [flashSaleDeadline]);
+
+  useEffect(() => {
+    const filter = new URLSearchParams(window.location.search).get("filter");
+
+    if (filter === "flash-sale") {
+      setActiveCategory("flash-sale");
+    }
+  }, []);
 
   return (
     <section
@@ -114,6 +151,17 @@ export default function ServicesSection() {
           >
             Semua bidang
           </button>
+          <button
+            className={`shrink-0 px-3 py-2 text-xs font-bold transition ${
+              activeCategory === "flash-sale"
+                ? "border-2 border-deep-navy bg-hot-pink text-deep-navy shadow-[2px_2px_0_var(--brand-orange)]"
+                : "border border-hot-pink/70 text-white/90 hover:border-orange hover:bg-hot-pink hover:text-deep-navy"
+            }`}
+            type="button"
+            onClick={() => setActiveCategory("flash-sale")}
+          >
+            Flash Sale
+          </button>
           {serviceGroups.map((group) => (
             <button
               key={group.id}
@@ -138,7 +186,7 @@ export default function ServicesSection() {
           <div className="mt-8">
             <div className="mb-4 flex items-center justify-between gap-4">
               <h3 className="min-w-0 text-lg font-bold sm:text-xl">
-                {activeCategory === "all" ? "Semua layanan" : activeCategory}
+                {activeCategory === "all" ? "Semua layanan" : activeCategory === "flash-sale" ? "Layanan Flash Sale" : activeCategory}
               </h3>
               <div className="flex items-center gap-3">
                 <span className="hidden text-xs text-white/80 sm:inline">
@@ -166,6 +214,14 @@ export default function ServicesSection() {
                 </div>
               </div>
             </div>
+            {activeCategory === "flash-sale" && timeRemaining ? (
+              <div className="mb-2 flex flex-wrap items-center gap-3 border-l-4 border-orange bg-deep-navy/80 px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white">
+                <span className="text-orange">Promo berakhir dalam</span>
+                <span className="text-base text-white">
+                  {timeRemaining.days}H : {formatTime(timeRemaining.hours)}J : {formatTime(timeRemaining.minutes)}M : {formatTime(timeRemaining.seconds)}D
+                </span>
+              </div>
+            ) : null}
             <div
               ref={servicesRailRef}
               className="flex items-stretch snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden pb-8 pt-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -181,15 +237,22 @@ export default function ServicesSection() {
                       transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
                     >
                       <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-brand-blue/10 transition-transform duration-500 group-hover:scale-150" />
-                      <div className="relative flex items-start justify-between gap-3">
+                      <div className="relative flex min-h-[62px] items-start justify-between gap-3">
                         <span className="flex h-10 w-10 items-center justify-center border border-brand-blue/40 bg-brand-blue/10 text-sm font-black text-brand-blue">
                           {String(index + 1).padStart(2, "0")}
                         </span>
-                        <p className="max-w-[72%] pt-1 text-right text-[10px] font-bold uppercase tracking-[0.14em] text-deep-navy/70">
-                          {service.category}
-                        </p>
+                        <div className="flex max-w-[70%] flex-col items-end gap-2 text-right">
+                          <p className="max-w-full pt-1 text-right text-[10px] font-bold uppercase tracking-[0.14em] text-deep-navy/70">
+                            {service.category}
+                          </p>
+                          {service.flashSale ? (
+                            <span className="border-2 border-deep-navy bg-hot-pink px-2 py-1 text-[10px] font-black uppercase leading-none tracking-[0.08em] text-deep-navy shadow-[2px_2px_0_var(--brand-orange)]">
+                              Flash Sale -{service.discount}%
+                            </span>
+                          ) : null}
+                        </div>
                       </div>
-                      <div className="relative mt-5 flex h-11 min-w-11 w-fit shrink-0 items-center justify-center gap-2 border-l-2 border-orange bg-brand-surface-alt px-3 text-lg text-deep-navy">
+                      <div className="relative mt-3 flex h-11 min-w-11 w-fit shrink-0 items-center justify-center gap-2 border-l-2 border-orange bg-brand-surface-alt px-3 text-lg text-deep-navy">
                         {getServiceIcons(service.name).map((ServiceIcon) => (
                           <ServiceIcon key={ServiceIcon.name} aria-hidden="true" />
                         ))}
@@ -201,9 +264,16 @@ export default function ServicesSection() {
                         {service.description}
                       </p>
                       <div className="relative mt-auto flex items-end justify-between gap-3 border-t border-deep-navy/15 pt-3">
-                        <span className="text-[11px] text-slate-500 line-through">
-                          {service.originalPrice}
-                        </span>
+                        <div>
+                          {service.flashSale ? (
+                            <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.08em] text-hot-pink">
+                              Hemat {service.discount}%
+                            </p>
+                          ) : null}
+                          <span className="text-[11px] text-slate-500 line-through">
+                            {service.originalPrice}
+                          </span>
+                        </div>
                         <span className="text-xl font-black text-orange">
                           {service.price}
                         </span>

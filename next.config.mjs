@@ -2,18 +2,12 @@
 const nextConfig = {
   reactCompiler: true,
   allowedDevOrigins: ["sebisaproject.farizsalim.click"],
-  async headers() {
-    return [
+  images: {
+    localPatterns: [
       {
-        source: "/_next/static/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "no-store, no-cache, must-revalidate",
-          },
-        ],
+        pathname: "/**",
       },
-    ];
+    ],
   },
 };
 

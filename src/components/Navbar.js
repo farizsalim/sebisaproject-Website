@@ -102,6 +102,26 @@ export default function Navbar() {
           </span>
         </button>
       </div>
+      <div className="overflow-hidden border-t border-white/10 bg-hot-pink text-deep-navy">
+        <div className="mx-auto flex min-h-9 w-full max-w-[1240px] items-center gap-3 px-4 text-[11px] font-black uppercase tracking-[0.08em] sm:px-6 lg:px-0">
+          <Link className="shrink-0 bg-orange px-2 py-1 text-[10px] tracking-[0.12em] transition hover:bg-white" href="/?filter=flash-sale#layanan">
+            Flash Sale
+          </Link>
+          <div className="min-w-0 flex-1 overflow-hidden whitespace-nowrap">
+            <div className="flex w-max animate-[ticker_24s_linear_infinite] gap-12 hover:[animation-play-state:paused]">
+              <span>Gratis konsultasi awal untuk ide bisnis kamu</span>
+              <span aria-hidden="true">✦</span>
+              <span>Bangun brand yang siap melangkah lebih jauh</span>
+              <span aria-hidden="true">✦</span>
+              <span>Gratis konsultasi awal untuk ide bisnis kamu</span>
+              <span aria-hidden="true">✦</span>
+            </div>
+          </div>
+          <Link className="hidden shrink-0 border-2 border-deep-navy bg-white px-3 py-1.5 text-[10px] transition hover:bg-orange sm:block" href="/?filter=flash-sale#layanan">
+            Ambil Slot
+          </Link>
+        </div>
+      </div>
       {isMenuOpen ? (
         <div className="absolute left-0 right-0 top-full border-t border-white/15 bg-deep-navy/95 px-4 py-4 shadow-lg backdrop-blur-md lg:hidden">
           <div className="mx-auto flex max-w-[1240px] flex-col gap-1 text-sm font-bold text-white">
