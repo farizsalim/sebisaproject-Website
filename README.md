@@ -16,6 +16,23 @@ bun dev
 
 Open [http://localhost:3002](http://localhost:3002) with your browser to see the result.
 
+## CMS Database Setup
+
+The CMS will use MySQL through Prisma. A local environment template is available
+in `.env.example`.
+
+1. Copy `.env.example` to `.env`.
+2. Replace `DB_USER` and `DB_PASSWORD` in `DATABASE_URL` with your local MySQL
+	credentials.
+3. Create a database named `sebisa_cms` in MySQL, or update the database name in
+	`DATABASE_URL`.
+4. Replace `AUTH_SECRET` with a long random value.
+
+MySQL service `MySQL80` is currently running on the development machine. The
+MySQL command-line client is not available on PATH, so database creation and
+connectivity checks will be completed when Prisma is installed in the next
+setup step.
+
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

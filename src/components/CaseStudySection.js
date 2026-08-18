@@ -21,60 +21,10 @@ const caseSlideVariants = {
   }),
 };
 
-function SideCaseCard({ caseStudy, side, onClick }) {
-  const media = caseStudy.media.slice(0, 5);
-
-  return (
-    <motion.button
-      className={`absolute ${side === "left" ? "-left-[30%]" : "-right-[30%]"} top-1/2 z-0 hidden aspect-[4/3] w-[28%] -translate-y-1/2 overflow-hidden border-2 border-brand-blue/70 bg-deep-navy p-1 text-left transition hover:border-orange lg:block`}
-      type="button"
-      aria-label={`Buka ${caseStudy.client}`}
-      onClick={onClick}
-      initial={{ opacity: 0, x: side === "left" ? 70 : -70 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: side === "left" ? 70 : -70 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <div className="flex h-full flex-col border border-brand-blue/50 bg-deep-navy p-1.5">
-        <div className="flex items-start justify-between gap-1 border-b border-white/20 pb-1.5">
-          <div className="min-w-0">
-            <span className="block text-[6px] font-black uppercase tracking-[0.18em] text-brand-blue-light">
-              Portofolio
-            </span>
-            <span className="mt-0.5 block truncate text-[10px] font-black uppercase text-white">
-              {caseStudy.client}
-            </span>
-          </div>
-          <span className="shrink-0 border border-orange px-1 py-0.5 text-[5px] font-black uppercase text-orange">
-            Detail
-          </span>
-        </div>
-        <div className="mt-1 grid min-h-0 flex-1 grid-cols-4 grid-rows-2 gap-0.5">
-          {media.map((item, index) => (
-            <div
-              key={`${caseStudy.id}-side-${item.src}`}
-              className={`relative min-h-0 overflow-hidden border border-hot-pink/50 ${index === 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1"}`}
-            >
-              {item.type === "video" ? (
-                <video className="h-full w-full object-cover" src={item.src} muted preload="none" />
-              ) : (
-                <Image src={item.src} alt="" fill sizes="12vw" className="object-cover" />
-              )}
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center justify-between border-t border-white/20 pt-1.5 text-[6px] font-black uppercase tracking-[0.08em]">
-          <span className="truncate text-brand-blue-light">Instagram client</span>
-          <span className="ml-1 h-1 w-3 shrink-0 bg-orange" />
-        </div>
-      </div>
-    </motion.button>
-  );
-}
-
 export default function CaseStudySection() {
   const [caseStudies, setCaseStudies] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState(1);
   const [isIntroExpanded, setIsIntroExpanded] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -86,6 +36,7 @@ export default function CaseStudySection() {
       try {
         const response = await axios.get("/data/case-studies.json");
         setCaseStudies(response.data);
+        setCarouselIndex(1);
       } catch {
         setError("Studi kasus belum dapat dimuat.");
       } finally {
@@ -97,33 +48,34 @@ export default function CaseStudySection() {
   }, []);
 
   const activeCase = caseStudies[activeIndex];
-  const previousCase = caseStudies.length > 1
-    ? caseStudies[(activeIndex - 1 + caseStudies.length) % caseStudies.length]
-    : null;
-  const nextCase = caseStudies.length > 1
-    ? caseStudies[(activeIndex + 1) % caseStudies.length]
-    : null;
   useEffect(() => {
-    if (caseStudies.length < 2) return undefined;
+    const videos = document.querySelectorAll("[data-case-study-video]");
 
-    const caseTimer = window.setInterval(() => {
-      setSlideDirection(1);
-      setActiveIndex((currentIndex) => (currentIndex + 1) % caseStudies.length);
-    }, 20000);
+    videos.forEach((video) => {
+      const isActiveVideo = video.closest('[data-case-study-card="active"]');
 
-    return () => window.clearInterval(caseTimer);
-  }, [caseStudies.length]);
+      if (isActiveVideo) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    });
+  }, [activeIndex, carouselIndex]);
+
+  useEffect(() => {
+    if (caseStudies.length < 2) return;
+    setCarouselIndex(1);
+  }, [activeIndex, caseStudies.length]);
 
   const changeCase = (direction) => {
+    if (caseStudies.length < 2) return;
+
     const nextIndex = activeIndex + direction;
-    selectCase(
-      nextIndex < 0
-        ? caseStudies.length - 1
-        : nextIndex >= caseStudies.length
-          ? 0
-          : nextIndex,
-      direction,
-    );
+    const wrappedIndex = (nextIndex + caseStudies.length) % caseStudies.length;
+    setSlideDirection(direction);
+    setActiveIndex(wrappedIndex);
+    setCarouselIndex(1);
+    setIsDetailsOpen(false);
   };
 
   const selectCase = (nextIndex, direction = nextIndex >= activeIndex ? 1 : -1) => {
@@ -131,6 +83,7 @@ export default function CaseStudySection() {
 
     setSlideDirection(direction);
     setActiveIndex(nextIndex);
+    setCarouselIndex(1);
     setIsDetailsOpen(false);
   };
 
@@ -140,11 +93,13 @@ export default function CaseStudySection() {
     changeCase(info.offset.x < 0 ? 1 : -1);
   };
 
-  const visibleMedia = activeCase?.media.slice(0, 5) || [];
+  const orderedCases = caseStudies.length > 1
+    ? [-1, 0, 1].map((offset) => caseStudies[(activeIndex + offset + caseStudies.length) % caseStudies.length])
+    : caseStudies;
 
   return (
     <section
-      className="relative min-h-[900px] overflow-hidden bg-deep-navy bg-[length:100%_auto] bg-center bg-no-repeat px-4 py-10 text-white [content-visibility:auto] [contain-intrinsic-size:900px] [font-family:Arial,sans-serif] sm:min-h-[760px] sm:px-6 sm:py-20 lg:min-h-[700px] lg:px-8"
+      className="relative min-h-[700px] overflow-hidden bg-deep-navy bg-[length:100%_auto] bg-center bg-no-repeat px-4 py-8 text-white [content-visibility:auto] [contain-intrinsic-size:700px] [font-family:Arial,sans-serif] sm:min-h-[760px] sm:px-6 sm:py-20 lg:min-h-[700px] lg:px-8"
       style={{ backgroundImage: "url('/images/Portofolio.png')" }}
     >
       <div className="brand-photo-overlay absolute inset-0" />
@@ -185,28 +140,10 @@ export default function CaseStudySection() {
           <p className="py-16 text-orange">{error}</p>
         ) : activeCase ? (
           <>
-          <div className="relative mx-auto min-h-[430px] w-full max-w-[620px] sm:min-h-[400px]">
-              <AnimatePresence initial={false} custom={slideDirection}>
-                {previousCase ? (
-                  <SideCaseCard
-                    key={`previous-${previousCase.id}`}
-                    caseStudy={previousCase}
-                    side="left"
-                    onClick={() => changeCase(-1)}
-                  />
-                ) : null}
-                {nextCase ? (
-                  <SideCaseCard
-                    key={`next-${nextCase.id}`}
-                    caseStudy={nextCase}
-                    side="right"
-                    onClick={() => changeCase(1)}
-                  />
-                ) : null}
-              </AnimatePresence>
+          <div className="container relative mx-auto flex min-h-[430px] justify-center overflow-hidden px-4 sm:min-h-[400px] lg:min-h-[400px] lg:px-8">
               <button
                 aria-label="Studi kasus sebelumnya"
-                className="absolute -left-14 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center border-2 border-hot-pink bg-deep-navy text-white transition hover:border-orange hover:bg-orange hover:text-deep-navy disabled:opacity-40 lg:flex"
+                className="absolute left-[calc(50%-330px)] top-1/2 z-30 hidden h-10 w-10 -translate-y-1/2 items-center justify-center border-2 border-hot-pink bg-deep-navy text-white shadow-lg transition hover:border-orange hover:bg-orange hover:text-deep-navy disabled:opacity-40 lg:flex"
                 title="Studi kasus sebelumnya"
                 type="button"
                 onClick={() => changeCase(-1)}
@@ -216,7 +153,7 @@ export default function CaseStudySection() {
               </button>
               <button
                 aria-label="Studi kasus berikutnya"
-                className="absolute -right-14 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center border-2 border-hot-pink bg-deep-navy text-white transition hover:border-orange hover:bg-orange hover:text-deep-navy disabled:opacity-40 lg:flex"
+                className="absolute right-[calc(50%-330px)] top-1/2 z-30 hidden h-10 w-10 -translate-y-1/2 items-center justify-center border-2 border-hot-pink bg-deep-navy text-white shadow-lg transition hover:border-orange hover:bg-orange hover:text-deep-navy disabled:opacity-40 lg:flex"
                 title="Studi kasus berikutnya"
                 type="button"
                 onClick={() => changeCase(1)}
@@ -224,21 +161,29 @@ export default function CaseStudySection() {
               >
                 <FaArrowRight aria-hidden="true" />
               </button>
-            <AnimatePresence mode="sync" initial={false} custom={slideDirection}>
-              <motion.div
-                key={activeCase.id}
-                custom={slideDirection}
-                variants={caseSlideVariants}
-                className="absolute inset-x-0 top-0 z-10 overflow-hidden border-2 border-brand-blue/60 bg-deep-navy/95 p-2 shadow-[4px_4px_0_var(--brand-hot-pink)] backdrop-blur-sm sm:p-3"
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.12}
-                onDragEnd={handleCaseSwipe}
-              >
+            <motion.div
+                className="relative flex w-max items-start gap-4 py-2 [--card-width:calc(100vw-2rem)] sm:[--card-width:600px]"
+              animate={{ x: 0 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.12}
+              onDragEnd={handleCaseSwipe}
+            >
+              {orderedCases.map((caseStudy, index) => {
+                const isActive = index === 1;
+                const media = caseStudy.media.slice(0, 5);
+
+                return (
+                  <motion.div
+                    key={`${caseStudy.id}-${index}`}
+                    data-case-study-card={isActive ? "active" : "inactive"}
+                    className={`relative w-[calc(100vw-2rem)] shrink-0 overflow-hidden border-2 bg-deep-navy/95 p-2 backdrop-blur-sm transition-shadow sm:w-[600px] sm:p-3 ${isActive ? "z-10 border-brand-blue shadow-[4px_4px_0_var(--brand-hot-pink)]" : "border-brand-blue/30 opacity-60 shadow-none"}`}
+                    initial={isActive ? { opacity: 0, x: slideDirection * 54 } : false}
+                    animate={{ x: 0, scale: 1, opacity: isActive ? 1 : 0.6 }}
+                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    onClick={() => selectCase((activeIndex + index - 1 + caseStudies.length) % caseStudies.length)}
+                  >
             <div className="flex items-end justify-between gap-3 px-1 pb-3 sm:px-2 sm:pb-4">
               <div className="min-w-0">
                 <p className="mb-1 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-brand-blue-light sm:text-[10px]">
@@ -246,22 +191,25 @@ export default function CaseStudySection() {
                   Portofolio
                 </p>
                 <h3 className="border-l-4 border-orange pl-2 text-xl font-black leading-tight sm:text-2xl">
-                  {activeCase.client}
+                  {caseStudy.client}
                 </h3>
               </div>
               <button
                 className="shrink-0 border border-orange px-2 py-1.5 text-[9px] font-black uppercase tracking-[0.08em] text-orange transition hover:bg-orange hover:text-deep-navy sm:px-3 sm:py-2 sm:text-[10px]"
                 type="button"
-                onClick={() => setIsDetailsOpen(true)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (isActive) setIsDetailsOpen(true);
+                }}
               >
                 Selengkapnya
               </button>
             </div>
 
             <div className="mx-auto grid aspect-[4/3] w-full max-w-[560px] grid-cols-2 grid-rows-3 gap-1.5 sm:aspect-[2/1] sm:grid-cols-4 sm:grid-rows-2 sm:gap-2">
-              {visibleMedia.map((media, index) => (
+              {media.map((media, index) => (
                 <motion.div
-                  key={`${activeCase.id}-${media.src}`}
+                  key={`${caseStudy.id}-${index}-${media.src}`}
                   className={`group relative flex min-h-0 items-center justify-center overflow-hidden border-2 border-hot-pink/60 bg-deep-navy shadow-[2px_2px_0_rgb(243_161_55_/_45%)] ${index === 0 ? "row-span-2 sm:col-span-2 sm:row-span-2" : index === 1 ? "col-start-2 row-start-1 sm:col-start-3 sm:row-start-1" : index === 2 ? "col-start-2 row-start-2 sm:col-start-4 sm:row-start-1" : index === 3 ? "col-start-1 row-start-3 sm:col-start-3 sm:row-start-2" : "col-start-2 row-start-3 sm:col-start-4 sm:row-start-2"}`}
                   initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -272,7 +220,8 @@ export default function CaseStudySection() {
                       src={media.src}
                       aria-label={media.alt}
                       className="block h-full w-full object-cover"
-                      autoPlay
+                      data-case-study-video
+                      autoPlay={isActive}
                       loop
                       muted
                       preload="none"
@@ -291,11 +240,11 @@ export default function CaseStudySection() {
               ))}
             </div>
 
-            <div className="mt-1 flex items-center justify-between gap-3 border-t border-white/15 px-1 pt-3 sm:px-2 sm:pt-4">
-              {activeCase.instagram ? (
+            <div className="relative mt-1 flex flex-col items-center gap-3 border-t border-white/15 px-1 pt-3 sm:flex-row sm:justify-between sm:px-2 sm:pt-4">
+              {caseStudy.instagram ? (
                 <a
-                  className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.1em] text-brand-blue-light transition hover:text-orange sm:text-xs"
-                  href={activeCase.instagram}
+                  className="inline-flex items-center gap-2 self-start text-[10px] font-black uppercase tracking-[0.1em] text-brand-blue-light transition hover:text-orange sm:text-xs"
+                  href={caseStudy.instagram}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -303,15 +252,13 @@ export default function CaseStudySection() {
                   Instagram client
                 </a>
               ) : <span />}
-              <div className="flex items-center gap-1.5" aria-label="Posisi studi kasus">
+              <div className="flex items-center gap-1.5 sm:absolute sm:left-1/2 sm:-translate-x-1/2" aria-label="Case portfolio aktif">
                 {caseStudies.map((caseStudy, index) => (
                   <button
                     key={caseStudy.id}
                     aria-label={`Buka ${caseStudy.eyebrow}`}
                     aria-current={index === activeIndex ? "true" : undefined}
-                    className={`h-1.5 transition-all ${
-                      index === activeIndex ? "w-8 bg-orange" : "w-3 bg-hot-pink/60"
-                    }`}
+                    className={`h-1.5 transition-all ${index === activeIndex ? "w-8 bg-orange" : "w-3 bg-hot-pink/60"}`}
                     type="button"
                     onClick={() => selectCase(index)}
                   />
@@ -342,9 +289,11 @@ export default function CaseStudySection() {
                   <FaArrowRight aria-hidden="true" />
                 </button>
               </div>
-            </div>
-              </motion.div>
-            </AnimatePresence>
+              </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           </div>
           </>
         ) : null}

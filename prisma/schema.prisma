@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+enum UserStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String
+  email         String     @unique
+  passwordHash  String
+  role          UserRole   @default(EDITOR)
+  status        UserStatus @default(INVITED)
+  emailVerified DateTime?
+  lastLoginAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+
+  sentInvites Invite[]  @relation("InvitedBy")
+  auditLogs   AuditLog[]
+
+  @@index([status])
+  @@index([role])
+}
+
+model Invite {
+  id          String    @id @default(cuid())
+  email       String
+  role        UserRole  @default(EDITOR)
+  tokenHash   String    @unique
+  expiresAt   DateTime
+  invitedById String
+  acceptedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  invitedBy User @relation("InvitedBy", fields: [invitedById], references: [id])
+
+  @@index([email])
+  @@index([expiresAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model SiteContent {
+  id          String   @id @default(cuid())
+  contentKey  String   @unique
+  value       Json
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished])
+}
+
+model ServiceCategory {
+  id          String    @id
+  category    String
+  icon        String    @default("chart")
+  isPublished Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  services    Service[]
+
+  @@index([isPublished, sortOrder])
+  @@map("service_category")
+}
+
+model Service {
+  id              String          @id @default(cuid())
+  categoryId      String
+  name            String
+  originalPrice   String          @default("")
+  price           String
+  duration        String          @default("")
+  description     String
+  benefits        Json?
+  isRecommended   Boolean         @default(false)
+  flashSale       Boolean         @default(false)
+  discount        Int             @default(0)
+  flashSaleEndsAt DateTime?
+  sortOrder       Int             @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  category        ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, name])
+  @@index([categoryId, sortOrder])
+  @@index([flashSale])
+  @@map("service")
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  logoPath    String   @unique
+  websiteUrl  String?
+  isPublished Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+}

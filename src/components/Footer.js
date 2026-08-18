@@ -2,7 +2,10 @@ import Image from "next/image";
 import ScrollLink from "@/components/ScrollLink";
 import { FaInstagram, FaLinkedinIn, FaTiktok, FaWhatsapp } from "react-icons/fa6";
 
-export default function Footer() {
+export default function Footer({ content }) {
+  const navigationLinks = content?.navigationLinks || [];
+  const socialLinks = content?.socialLinks || {};
+
   return (
     <footer className="brand-footer-gradient px-4 py-10 text-white [font-family:Arial,sans-serif] sm:px-6 sm:py-14 lg:px-8">
       <div className="mx-auto grid max-w-[1240px] gap-8 sm:grid-cols-[1.4fr_0.8fr_0.8fr]">
@@ -17,32 +20,31 @@ export default function Footer() {
             />
           </span>
           <p className="mt-3 max-w-sm text-sm leading-6 text-white/85">
-            Partner kreatif dan strategis untuk membantu ide digital tumbuh
-            menjadi hasil yang nyata.
+            {content?.description}
           </p>
         </div>
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-blue-light">
-            Navigasi
+            {content?.navigationTitle}
           </p>
           <div className="mt-4 flex flex-col gap-3 text-sm text-white/85">
-            <ScrollLink className="transition hover:text-brand-blue-light" href="#tentang-kami">Tentang Kami</ScrollLink>
-            <ScrollLink className="transition hover:text-brand-blue-light" href="#layanan">Layanan</ScrollLink>
-            <ScrollLink className="transition hover:text-brand-blue-light" href="#studi-kasus">Kisah</ScrollLink>
+            <ScrollLink className="transition hover:text-brand-blue-light" href="#tentang-kami">{navigationLinks[0]}</ScrollLink>
+            <ScrollLink className="transition hover:text-brand-blue-light" href="#layanan">{navigationLinks[1]}</ScrollLink>
+            <ScrollLink className="transition hover:text-brand-blue-light" href="#studi-kasus">{navigationLinks[2]}</ScrollLink>
           </div>
         </div>
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-blue-light">
-            Hubungi kami
+            {content?.contactTitle}
           </p>
           <ScrollLink className="mt-4 inline-block text-sm text-white/85 transition hover:text-orange" href="#konsultasi">
-            Mulai dari konsultasi
+            {content?.consultationCta}
           </ScrollLink>
           <div className="mt-5 flex items-center gap-3">
             <a
               aria-label="Instagram Sebisa Project"
               className="flex h-10 w-10 items-center justify-center border-2 border-white/35 text-white/85 transition hover:-translate-y-0.5 hover:border-orange hover:text-orange"
-              href="https://www.instagram.com/sebisaproject/"
+              href={socialLinks.instagram}
               rel="noreferrer"
               target="_blank"
               title="Instagram"
@@ -52,7 +54,7 @@ export default function Footer() {
             <a
               aria-label="LinkedIn Sebisa Project"
               className="flex h-10 w-10 items-center justify-center border-2 border-white/35 text-white/85 transition hover:-translate-y-0.5 hover:border-orange hover:text-orange"
-              href="https://www.linkedin.com/company/sebisa-project/"
+              href={socialLinks.linkedin}
               rel="noreferrer"
               target="_blank"
               title="LinkedIn"
@@ -62,7 +64,7 @@ export default function Footer() {
             <a
               aria-label="TikTok Sebisa Project"
               className="flex h-10 w-10 items-center justify-center border-2 border-white/35 text-white/85 transition hover:-translate-y-0.5 hover:border-orange hover:text-orange"
-              href="https://www.tiktok.com/@sebisaproject"
+              href={socialLinks.tiktok}
               rel="noreferrer"
               target="_blank"
               title="TikTok"
@@ -72,7 +74,7 @@ export default function Footer() {
             <a
               aria-label="WhatsApp Sebisa Project"
               className="flex h-10 w-10 items-center justify-center border-2 border-white/35 text-white/85 transition hover:-translate-y-0.5 hover:border-orange hover:text-orange"
-              href="https://wa.me/6280000000000"
+              href={socialLinks.whatsapp}
               rel="noreferrer"
               target="_blank"
               title="WhatsApp"

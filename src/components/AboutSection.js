@@ -18,7 +18,7 @@ function getInitials(name) {
     .toUpperCase();
 }
 
-export default function AboutSection() {
+export default function AboutSection({ content }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [teamPreview, setTeamPreview] = useState([]);
 
@@ -50,30 +50,15 @@ export default function AboutSection() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-deep-navy sm:text-sm">
-            Tentang Kami
+            {content?.eyebrow}
           </p>
           <h2 className="max-w-3xl text-3xl font-black uppercase leading-[1.02] tracking-tight [text-shadow:3px_3px_0_var(--brand-blue-light)] sm:text-5xl lg:text-[52px]">
-            Perusahaan Penyedia Jasa Digital Profesional Bergaransi
+            {content?.title}
           </h2>
           <div className="mt-6 max-w-2xl space-y-4 text-sm leading-7 text-brand-muted sm:mt-8 sm:text-base">
-            <p>
-              Sebisa Project adalah partner kreatif dan strategis untuk membantu
-              bisnis, brand, dan personal brand tumbuh lebih kuat di era digital.
-            </p>
+            {content?.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
             {isExpanded ? (
-              <>
-                <p>
-                  Kami melayani kebutuhan B2B maupun B2C, mulai dari pengembangan
-                  branding, desain kreatif, produksi konten, pengelolaan social
-                  media, iklan digital, pembuatan website, hingga solusi bisnis
-                  yang disesuaikan dengan kebutuhan Anda.
-                </p>
-                <p>
-                  Dengan pendekatan profesional, fleksibel, dan berorientasi hasil,
-                  kami tidak hanya mengerjakan proyek, tetapi membangun hubungan
-                  kerja sama jangka panjang yang saling menguntungkan.
-                </p>
-              </>
+              content?.expandedParagraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
             ) : null}
           </div>
           <button
@@ -82,10 +67,10 @@ export default function AboutSection() {
             onClick={() => setIsExpanded((expanded) => !expanded)}
             className="mt-6 border-b border-brand-blue-light pb-1 text-sm font-bold text-brand-blue transition hover:border-orange hover:text-orange"
           >
-            {isExpanded ? "Sembunyikan" : "Baca selengkapnya"}
+            {isExpanded ? content?.readLess : content?.readMore}
           </button>
             <p className="mt-7 border-l-4 border-orange pl-4 text-base font-black leading-6 text-deep-navy sm:text-lg">
-            Dari Ide Menjadi Realita, Dari Strategi Menjadi Hasil.
+            {content?.tagline}
           </p>
         </motion.div>
 

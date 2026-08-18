@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import ScrollLink from "@/components/ScrollLink";
 
-export default function FinalCtaSection() {
+export default function FinalCtaSection({ content }) {
   return (
     <section
       className="brand-light-gradient relative overflow-hidden px-4 py-16 text-deep-navy [content-visibility:auto] [contain-intrinsic-size:500px] [font-family:Arial,sans-serif] sm:px-6 sm:py-24 lg:px-8"
@@ -17,14 +17,13 @@ export default function FinalCtaSection() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-deep-navy sm:text-sm">
-          Langkah berikutnya
+          {content?.eyebrow}
         </p>
         <h2 className="text-3xl font-black uppercase leading-[1.02] tracking-tight [text-shadow:3px_3px_0_var(--brand-blue-light)] sm:text-5xl lg:text-[52px]">
-          Siap <span className="text-orange">mulai</span> langkah digital pertamamu?
+          {content?.titleBeforeHighlight} <span className="text-orange">{content?.titleHighlight}</span> {content?.titleAfterHighlight}
         </h2>
         <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base sm:leading-7">
-          Ceritakan kebutuhanmu. Kami bantu menerjemahkan ide menjadi langkah
-          yang lebih jelas dan bisa dikerjakan.
+          {content?.description}
         </p>
         <motion.div
           className="mt-8 inline-flex"
@@ -32,7 +31,7 @@ export default function FinalCtaSection() {
           whileTap={{ scale: 0.97 }}
         >
           <ScrollLink className="inline-flex items-center justify-center border-2 border-deep-navy bg-orange px-7 py-4 text-sm font-black uppercase tracking-[0.08em] text-deep-navy shadow-[4px_4px_0_var(--brand-hot-pink)] transition duration-200 hover:-translate-y-1 hover:bg-white hover:shadow-[6px_6px_0_var(--brand-hot-pink)]" href="#konsultasi">
-            Konsultasi Sekarang
+            {content?.button}
           </ScrollLink>
         </motion.div>
       </motion.div>
