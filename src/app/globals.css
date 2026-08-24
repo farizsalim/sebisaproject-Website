@@ -44,26 +44,26 @@ html {
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #06466b;
-  --brand-blue: #1ebdfe;
-  --brand-blue-light: #9bdffb;
-  --brand-deep-navy: #06466b;
-  --brand-surface: #f4fbfe;
-  --brand-surface-alt: #e5f7fd;
-  --brand-surface-soft: #eaf8fd;
-  --brand-surface-blue: #e4f0f3;
-  --brand-panel: #e5eef5;
-  --brand-hot-pink: #f32d9b;
-  --brand-orange: #FFB800;
-  --brand-footer: #043b61;
-  --brand-footer-deep: #001c59;
-  --brand-muted: #64748b;
-  --brand-hero-navy-overlay: rgb(6 70 107 / 72%);
-  --brand-hero-blue-overlay: rgb(33 188 251 / 68%);
-  --brand-photo-navy-strong: rgb(6 70 107 / 84%);
-  --brand-photo-navy: rgb(6 70 107 / 68%);
-  --brand-photo-blue: rgb(33 188 251 / 62%);
+  --background: #f7f6f1;
+  --foreground: #17243d;
+  --brand-blue: #2563eb;
+  --brand-blue-light: #a9c7ff;
+  --brand-deep-navy: #17243d;
+  --brand-surface: #ffffff;
+  --brand-surface-alt: #edf2ff;
+  --brand-surface-soft: #f1efe9;
+  --brand-surface-blue: #e3ebff;
+  --brand-panel: #e8e5dc;
+  --brand-hot-pink: #ef5da8;
+  --brand-orange: #ffb000;
+  --brand-footer: #17243d;
+  --brand-footer-deep: #0d1528;
+  --brand-muted: #687386;
+  --brand-hero-navy-overlay: rgb(23 36 61 / 78%);
+  --brand-hero-blue-overlay: rgb(37 99 235 / 38%);
+  --brand-photo-navy-strong: rgb(23 36 61 / 88%);
+  --brand-photo-navy: rgb(23 36 61 / 72%);
+  --brand-photo-blue: rgb(37 99 235 / 42%);
 }
 
 @theme inline {
@@ -92,11 +92,11 @@ html {
 }
 
 .brand-light-gradient {
-  background: linear-gradient(180deg, var(--brand-surface) 0%, var(--brand-surface-alt) 100%);
+  background: var(--brand-surface);
 }
 
 .brand-about-gradient {
-  background: linear-gradient(135deg, var(--brand-surface) 0%, var(--brand-surface-blue) 100%);
+  background: var(--brand-surface);
 }
 
 .brand-hero-overlay {
@@ -108,7 +108,7 @@ html {
 }
 
 .brand-clients-gradient {
-  background: linear-gradient(180deg, var(--brand-surface) 0%, var(--brand-surface-soft) 100%);
+  background: var(--brand-surface);
 }
 
 .brand-photo-overlay {
@@ -132,7 +132,17 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
   overflow-x: hidden;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--brand-orange);
+  color: var(--brand-deep-navy);
 }
 

@@ -19,6 +19,27 @@ enum UserStatus {
   SUSPENDED
 }
 
+enum ConsultationNodeType {
+  QUESTION
+  RESULT
+}
+
+enum PaymentStatus {
+  PENDING
+  SETTLEMENT
+  CAPTURE
+  DENY
+  CANCEL
+  EXPIRE
+  REFUND
+  UNKNOWN
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
+}
+
 model User {
   id            String     @id @default(cuid())
   name          String
@@ -84,6 +105,80 @@ model SiteContent {
   @@index([isPublished])
 }
 
+model ConsultationQuiz {
+  id            String                 @id @default(cuid())
+  slug          String                 @unique
+  title         String
+  version       Int                    @default(1)
+  isPublished   Boolean                @default(false)
+  startNodeId   String?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  nodes         ConsultationQuizNode[]
+  submissions   ConsultationSubmission[]
+
+  @@index([isPublished])
+}
+
+model ConsultationQuizNode {
+  id              String                    @id @default(cuid())
+  quizId          String
+  type            ConsultationNodeType
+  title           String
+  description     String                    @default("")
+  positionX       Float                     @default(0)
+  positionY       Float                     @default(0)
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+  quiz            ConsultationQuiz          @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options         ConsultationQuizOption[]  @relation("QuestionOptions")
+  incomingOptions ConsultationQuizOption[]  @relation("TargetNode")
+
+  @@index([quizId, type])
+}
+
+model ConsultationQuizOption {
+  id             String                       @id @default(cuid())
+  nodeId         String
+  targetNodeId   String?
+  label          String
+  sortOrder      Int                          @default(0)
+  node           ConsultationQuizNode         @relation("QuestionOptions", fields: [nodeId], references: [id], onDelete: Cascade)
+  targetNode     ConsultationQuizNode?        @relation("TargetNode", fields: [targetNodeId], references: [id], onDelete: SetNull)
+  scoreRules     ConsultationQuizOptionScore[]
+
+  @@index([nodeId, sortOrder])
+  @@index([targetNodeId])
+}
+
+model ConsultationQuizOptionScore {
+  id          String                  @id @default(cuid())
+  optionId    String
+  serviceId   String
+  score       Int                     @default(0)
+  option      ConsultationQuizOption  @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  service     Service                 @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([optionId, serviceId])
+  @@index([serviceId])
+}
+
+model ConsultationSubmission {
+  id              String   @id @default(cuid())
+  quizId          String?
+  quizVersion     Int?
+  name            String
+  whatsapp        String
+  business        String
+  answers         Json
+  recommendations Json
+  createdAt       DateTime @default(now())
+  quiz            ConsultationQuiz? @relation(fields: [quizId], references: [id], onDelete: SetNull)
+
+  @@index([quizId, createdAt])
+  @@map("consultation_submission")
+}
+
 model ServiceCategory {
   id          String    @id
   category    String
@@ -115,11 +210,58 @@ model Service {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   category        ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  quizScores      ConsultationQuizOptionScore[]
+  paymentOrders   PaymentOrder[]
 
   @@unique([categoryId, name])
   @@index([categoryId, sortOrder])
   @@index([flashSale])
   @@map("service")
+}
+
+model PaymentOrder {
+  id                    String        @id @default(cuid())
+  orderId               String        @unique
+  serviceId             String
+  customerName          String
+  customerEmail         String
+  customerPhone         String
+  grossAmount           Int
+  couponId              String?
+  couponCode            String?
+  discountAmount        Int               @default(0)
+  status                PaymentStatus @default(PENDING)
+  transactionId         String?
+  paymentType            String?
+  fraudStatus            String?
+  rawNotification        Json?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  paidAt                 DateTime?
+  service                Service       @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  coupon                Coupon?        @relation(fields: [couponId], references: [id], onDelete: SetNull)
+
+  @@index([serviceId])
+  @@index([status, createdAt])
+  @@map("payment_order")
+}
+
+model Coupon {
+  id          String      @id @default(cuid())
+  code        String      @unique
+  type        CouponType
+  value       Int
+  minAmount   Int         @default(0)
+  maxUses     Int?
+  usedCount   Int         @default(0)
+  isActive    Boolean     @default(true)
+  startsAt    DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orders      PaymentOrder[]
+
+  @@index([isActive, startsAt, expiresAt])
 }
 
 model Client {

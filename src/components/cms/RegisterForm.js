@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const inputClassName =
-  "w-full border-2 border-deep-navy/15 bg-brand-surface px-4 py-3 text-sm text-deep-navy outline-none transition placeholder:text-slate-400 focus:border-brand-blue focus:bg-white";
+  "w-full rounded-xl border border-deep-navy/15 bg-brand-surface px-4 py-3 text-sm text-deep-navy outline-none transition placeholder:text-slate-400 focus:border-brand-blue focus:bg-white";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function RegisterForm() {
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
       {error ? (
-        <p className="border-l-4 border-hot-pink bg-hot-pink/10 px-4 py-3 text-sm font-bold leading-5 text-deep-navy" role="alert">
+        <p className="rounded-xl border-l-4 border-hot-pink bg-hot-pink/10 px-4 py-3 text-sm font-bold leading-5 text-deep-navy" role="alert">
           {error}
         </p>
       ) : null}
@@ -89,7 +89,7 @@ export default function RegisterForm() {
       </div>
 
       <button
-        className="w-full border-2 border-deep-navy bg-orange px-4 py-3 text-sm font-black uppercase tracking-[0.08em] text-deep-navy shadow-[3px_3px_0_var(--brand-hot-pink)] transition hover:-translate-y-0.5 hover:bg-white hover:shadow-[5px_5px_0_var(--brand-hot-pink)] disabled:cursor-wait disabled:opacity-60"
+        className="w-full rounded-full border border-deep-navy bg-orange px-4 py-3 text-sm font-black uppercase tracking-[0.08em] text-deep-navy shadow-[0_8px_18px_rgb(23_36_61_/_14%)] transition hover:-translate-y-0.5 hover:bg-white disabled:cursor-wait disabled:opacity-60"
         disabled={isSubmitting}
         type="submit"
       >

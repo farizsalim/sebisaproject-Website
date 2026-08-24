@@ -18,7 +18,6 @@ export default function OurTeamPage() {
           style={{ backgroundImage: "url('/images/Portofolio.png')" }}
         >
           <div className="brand-photo-overlay absolute inset-0" />
-          <div className="brand-top-line absolute inset-x-0 top-0 z-10 h-1" />
           <div className="relative z-10 mx-auto max-w-[1240px]">
             <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-orange sm:text-sm">
               Our Team

@@ -1,20 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 const sectionLabels = {
   about: "Tentang Kami",
   clients: "Mitra",
+  consultationQuiz: "Kuis Konsultasi",
   faq: "Pertanyaan Umum",
   finalCta: "CTA Penutup",
   footer: "Footer",
-  hero: "Hero / Halaman Utama",
+  hero: "Halaman utama",
   highlight: "Highlight kuning",
-  navbar: "Navigasi Website",
+  navbar: "Navigasi website",
 };
 
-const sectionOrder = ["navbar", "hero", "clients", "about", "faq", "finalCta", "footer"];
+const sectionOrder = ["navbar", "hero", "consultationQuiz", "clients", "about", "faq", "finalCta", "footer"];
 
 const fieldLabels = {
   answer: "Jawaban",
@@ -24,6 +26,7 @@ const fieldLabels = {
   eyebrow: "Label kecil",
   expandedParagraphs: "Paragraf lanjutan",
   headingSegments: "Judul utama",
+  highlight: "Sorot kata ini",
   intro: "Pengantar",
   navigationLinks: "Link navigasi",
   navigationTitle: "Judul navigasi",
@@ -47,7 +50,7 @@ const fieldLabels = {
   items: "Daftar pertanyaan",
 };
 
-const inputClassName = "w-full border-2 border-deep-navy/15 bg-brand-surface px-4 py-3 text-sm text-deep-navy outline-none transition placeholder:text-slate-400 focus:border-brand-blue focus:bg-white";
+const inputClassName = "w-full rounded-xl border border-deep-navy/15 bg-brand-surface px-4 py-3 text-sm text-deep-navy outline-none transition placeholder:text-slate-400 focus:border-brand-blue focus:bg-white";
 
 function humanizeKey(key) {
   return fieldLabels[key] || key.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase());
@@ -122,7 +125,7 @@ function ValueEditor({ label, value, path, onChange }) {
         {label ? <legend className="mb-3 px-1 text-sm font-black text-deep-navy">{label}</legend> : null}
         <div className="grid min-w-0 gap-3">
           {value.map((item, index) => (
-            <div className="min-w-0 border border-deep-navy/10 bg-slate-50 p-3 sm:p-4" key={`${path.join("-")}-${index}`}>
+            <div className="min-w-0 rounded-xl border border-deep-navy/10 bg-slate-50 p-3 sm:p-4" key={`${path.join("-")}-${index}`}>
               <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-brand-blue">{label || "Item"} {index + 1}</p>
               <ValueEditor label="" value={item} path={[...path, index]} onChange={onChange} />
             </div>
@@ -186,8 +189,10 @@ export default function ContentManager() {
   }, []);
 
   useEffect(() => {
-    if (!requestedSection || content.length === 0) return;
-    const requestedContent = content.find((item) => item.contentKey === requestedSection);
+    if (content.length === 0) return;
+    const requestedContent = requestedSection
+      ? content.find((item) => item.contentKey === requestedSection)
+      : content[0];
     if (requestedContent && selected?.id !== requestedContent.id) selectContent(requestedContent);
   }, [requestedSection, content, selected?.id]);
 
@@ -239,22 +244,32 @@ export default function ContentManager() {
   }
 
   return (
-    <section className="min-w-0 overflow-hidden border-2 border-deep-navy bg-white p-4 sm:p-6" aria-labelledby="content-editor-title">
+    <section className="min-w-0 overflow-hidden rounded-2xl border border-deep-navy/10 bg-white p-4 shadow-[0_12px_28px_rgb(23_36_61_/_8%)] sm:p-6" aria-labelledby="content-editor-title">
         {!selected ? (
           <div className="flex min-h-80 items-center justify-center text-center">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">Editor konten</p>
               <h2 className="mt-3 text-xl font-black sm:text-2xl">{isLoading ? "Memuat konten..." : "Pilih section dari sidebar"}</h2>
-              <p className="mt-3 max-w-sm text-sm leading-6 text-slate-600">Buka menu Konten Website di sidebar, lalu pilih section yang ingin diedit.</p>
+              <p className="mt-3 max-w-sm text-sm leading-6 text-slate-600">Pilih bagian website dari menu di sidebar untuk mulai mengubah isinya.</p>
             </div>
           </div>
         ) : (
           <>
             <div className="border-b-2 border-deep-navy/10 pb-5">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">{selected.contentKey}</p>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">Konten website</p>
               <h2 id="content-editor-title" className="mt-2 text-xl font-black sm:text-2xl">{sectionLabels[selected.contentKey] || selected.contentKey}</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">Edit isi teks di bawah ini. Struktur section dan key tidak dapat diubah.</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Perbarui tulisan yang tampil di website. Perubahan akan terlihat setelah disimpan.</p>
             </div>
+
+            <nav className="mt-5 rounded-xl border border-deep-navy/10 bg-brand-surface p-3" aria-label="Bagian website">
+              <p className="px-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Pilih bagian yang ingin diedit</p>
+              <div className="mt-2 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {content.map((item) => {
+                  const isSelected = item.contentKey === selected.contentKey;
+                  return <Link className={`shrink-0 rounded-lg px-3 py-2 text-xs font-black transition ${isSelected ? "bg-deep-navy text-white" : "bg-white text-slate-600 hover:bg-orange hover:text-deep-navy"}`} href={`/cms/content?section=${item.contentKey}`} key={item.id}>{sectionLabels[item.contentKey] || item.contentKey}</Link>;
+                })}
+              </div>
+            </nav>
 
             {message ? <p className="mt-5 border-l-4 border-emerald-500 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800" role="status">{message}</p> : null}
             {error ? <p className="mt-5 border-l-4 border-hot-pink bg-hot-pink/10 px-4 py-3 text-sm font-bold text-deep-navy" role="alert">{error}</p> : null}
@@ -265,7 +280,7 @@ export default function ContentManager() {
                 <input checked={isPublished} className="h-4 w-4 accent-[var(--brand-deep-navy)]" onChange={(event) => setIsPublished(event.target.checked)} type="checkbox" />
                 Tampilkan perubahan di website
               </label>
-              <button className="border-2 border-deep-navy bg-orange px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-deep-navy shadow-[3px_3px_0_var(--brand-hot-pink)] transition hover:bg-white disabled:opacity-60" disabled={isSaving} type="submit">
+              <button className="rounded-full border border-deep-navy bg-orange px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-deep-navy shadow-[0_8px_20px_rgb(23_36_61_/_14%)] transition hover:bg-white disabled:opacity-60" disabled={isSaving} type="submit">
                 {isSaving ? "Menyimpan..." : "Simpan perubahan"}
               </button>
             </form>

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import fallbackServices from "../../../public/data/services.json";
 
-const fallbackContent = {
+export const fallbackContent = {
   hero: {
     headingSegments: [
       { text: "Punya", spaceAfter: true, highlight: false },
@@ -24,6 +24,60 @@ const fallbackContent = {
       "Bangun brand yang siap melangkah lebih jauh",
     ],
     slotCta: "Ambil Slot",
+  },
+  consultationQuiz: {
+    eyebrow: "Konsultasi singkat",
+    questions: [
+      { title: "Apa yang ingin kamu kembangkan?", options: ["Bisnis atau UMKM", "Brand", "Personal brand", "Event atau campaign"] },
+      { title: "Untuk bisnis atau UMKM, apa fokus utamamu?", options: ["Merapikan brand", "Mendapatkan pelanggan", "Membuat konten rutin", "Membangun sistem bisnis"] },
+      { title: "Untuk brand, apa yang ingin diperkuat?", options: ["Identitas visual", "Kampanye promosi", "Konten media sosial", "Jangkauan audiens"] },
+      { title: "Untuk personal brand, apa targetmu?", options: ["Membangun kredibilitas", "Meningkatkan engagement", "Membuat konten", "Menjual produk atau jasa"] },
+      { title: "Untuk event atau campaign, apa yang paling dibutuhkan?", options: ["Konsep kreatif", "Promosi digital", "Produksi konten", "Landing page event"] },
+      { title: "Kapan kamu ingin mulai?", options: ["Secepatnya", "Dalam 1-2 minggu", "Bulan ini", "Masih eksplorasi"] },
+      { title: "Apa hasil yang paling ingin kamu capai?", options: ["Konten konsisten", "Brand terlihat profesional", "Lebih banyak pelanggan", "Website atau landing page siap"] },
+    ],
+    recommendations: {
+      "Social Media Management": ["Social Media Management", "Content Production"],
+      "Content Production": ["Content Production", "Social Media Management"],
+      "Digital Ads": ["Digital Ads", "Content Production"],
+      "Website atau Landing Page": ["Paket Website", "Paket Landing Page"],
+      "Marketplace & Merchandise": ["Marketplace & Merchandise", "Content Production"],
+    },
+    scoringRules: {
+      "Bisnis atau UMKM": { "Social Media Jalan Terus": 2, "Paket Website": 1 },
+      Brand: { "Design Graphic Set A": 2, "Paket Kreator": 1 },
+      "Personal brand": { "Paket Kreator": 2, "Social Media Jalan Terus": 1 },
+      "Event atau campaign": { "Paket Kreator": 2, "Paket Landing Page": 2 },
+      "Merapikan brand": { "Design Graphic Set A": 3 },
+      "Mendapatkan pelanggan": { "Paket Sosmed": 2, "Social Media Jalan Terus": 2 },
+      "Membuat konten rutin": { "Paket Konten Terima Beres": 3, "Paket Kreator": 2 },
+      "Membangun sistem bisnis": { "Paket Website": 3 },
+      "Identitas visual": { "Design Graphic Set A": 3 },
+      "Kampanye promosi": { "Paket Kreator": 2, "Paket Landing Page": 1 },
+      "Konten media sosial": { "Social Media Jalan Terus": 3, "Paket Kreator": 2 },
+      "Jangkauan audiens": { "Paket Sosmed": 3 },
+      "Membangun kredibilitas": { "Paket Website": 2, "Design Graphic Set A": 1 },
+      "Meningkatkan engagement": { "Social Media Jalan Terus": 3 },
+      "Membuat konten": { "Paket Kreator": 3 },
+      "Menjual produk atau jasa": { "Paket Landing Page": 2, "Paket Website": 1 },
+      "Konsep kreatif": { "Paket Kreator": 3 },
+      "Promosi digital": { "Paket Sosmed": 2, "Paket Landing Page": 1 },
+      "Produksi konten": { "Paket Kreator": 3 },
+      "Landing page event": { "Paket Landing Page": 4 },
+      "Konten konsisten": { "Paket Konten Terima Beres": 4, "Social Media Jalan Terus": 3, "Paket Kreator": 2 },
+      "Brand terlihat profesional": { "Design Graphic Set A": 4, "Paket Kreator": 2 },
+      "Lebih banyak pelanggan": { "Paket Sosmed": 4, "Social Media Jalan Terus": 2 },
+      "Website atau landing page siap": { "Paket Website": 4, "Paket Landing Page": 4 },
+      "Secepatnya": { "Social Media Jalan Terus": 1 },
+      "Dalam 1-2 minggu": { "Paket Landing Page": 1 },
+      "Bulan ini": { "Paket Kreator": 1 },
+      "Social Media Management": { "Social Media Jalan Terus": 5 },
+      "Content Production": { "Paket Kreator": 5 },
+      "Digital Ads": { "Paket Sosmed": 5 },
+      "Website atau Landing Page": { "Paket Website": 4, "Paket Landing Page": 4 },
+      "Marketplace & Merchandise": { "Paket Kreator": 3, "Paket Website": 2 },
+    },
+    defaultRecommendations: ["Social Media Management", "Content Production"],
   },
   about: {
     eyebrow: "Tentang Kami",
@@ -81,6 +135,54 @@ const fallbackContent = {
   },
 };
 
+function createDefaultQuizFlow(quizContent) {
+  const questions = quizContent.questions.map((question, index) => ({
+    id: `q${index + 1}`,
+    type: "question",
+    position: { x: index === 0 ? 80 : index === quizContent.questions.length - 1 ? 1120 : 420, y: index === 0 ? 360 : index === quizContent.questions.length - 1 ? 360 : 80 + (index - 1) * 145 },
+    data: {
+      title: question.title,
+      options: question.options.map((label) => ({ label, target: null })),
+    },
+  }));
+  const recommendationLabels = [...new Set(Object.values(quizContent.recommendations).flat())];
+  const results = recommendationLabels.map((label, index) => ({
+    id: `result-${index + 1}`,
+    type: "result",
+    position: { x: questions.length * 360, y: index * 140 },
+    data: { label },
+  }));
+  const edges = [];
+  const firstQuestion = questions[0];
+  const outcomeQuestion = questions.find((question) => question.data.title.startsWith("Apa hasil"));
+  const timingQuestion = questions.find((question) => question.data.title.startsWith("Kapan"));
+  const branchQuestions = questions.filter((question) => question !== firstQuestion && question !== outcomeQuestion && question !== timingQuestion);
+
+  function connectAll(source, target) {
+    source?.data.options.forEach((option, index) => {
+      option.target = target?.id || null;
+      if (target) edges.push({ id: `${source.id}-${index}-${target.id}`, source: source.id, sourceHandle: `option-${index}`, target: target.id, type: "smoothstep", animated: true });
+    });
+  }
+
+  firstQuestion?.data.options.forEach((option, index) => {
+    const target = branchQuestions[index] || branchQuestions[0];
+    option.target = target?.id || null;
+    if (target) edges.push({ id: `${firstQuestion.id}-${index}-${target.id}`, source: firstQuestion.id, sourceHandle: `option-${index}`, target: target.id, type: "smoothstep", animated: true });
+  });
+  branchQuestions.forEach((question) => connectAll(question, outcomeQuestion));
+  connectAll(outcomeQuestion, timingQuestion);
+  timingQuestion?.data.options.forEach((option, index) => {
+    const target = results[index % results.length];
+    option.target = target?.id || null;
+    if (target) edges.push({ id: `${timingQuestion.id}-${index}-${target.id}`, source: timingQuestion.id, sourceHandle: `option-${index}`, target: target.id, type: "smoothstep", animated: true });
+  });
+
+  return { version: 3, startId: firstQuestion?.id || null, nodes: [...questions, ...results], edges };
+}
+
+fallbackContent.consultationQuiz.flow = createDefaultQuizFlow(fallbackContent.consultationQuiz);
+
 const fallbackClients = [
   "kz6ioaghyw3kmkvwz7yk.png",
   "maikqfdco0mdqzdes9rk.png",
@@ -106,22 +208,9 @@ const fallbackClients = [
 }));
 
 export async function getSiteContent(contentKeys) {
-  const content = Object.fromEntries(
+  return Object.fromEntries(
     contentKeys.map((contentKey) => [contentKey, fallbackContent[contentKey]]),
   );
-
-  try {
-    const rows = await prisma.siteContent.findMany({
-      where: { contentKey: { in: contentKeys }, isPublished: true },
-      select: { contentKey: true, value: true },
-    });
-
-    for (const row of rows) content[row.contentKey] = row.value;
-  } catch {
-    return content;
-  }
-
-  return content;
 }
 
 export async function getServices() {
@@ -143,6 +232,7 @@ export async function getServices() {
       category: category.category,
       icon: category.icon,
       services: category.services.map((service) => ({
+        id: service.id,
         name: service.name,
         originalPrice: service.originalPrice,
         price: service.price,

@@ -1,9 +1,15 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth/password";
 import { registerSchema } from "@/lib/auth/validation";
 
 export async function registerController(request) {
   try {
+    const session = await auth();
+    if (session?.user?.role !== "SUPER_ADMIN") {
+      return Response.json({ error: "Hanya SUPER_ADMIN yang dapat mendaftarkan akun" }, { status: 403 });
+    }
+
     const body = await request.json();
     const result = registerSchema.safeParse(body);
 
@@ -26,6 +32,7 @@ export async function registerController(request) {
         name,
         email,
         passwordHash: await hashPassword(password),
+        role: "ADMIN",
         status: "ACTIVE",
       },
       select: {

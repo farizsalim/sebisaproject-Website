@@ -11,7 +11,7 @@ export default function Hero({ content }) {
   const renderHeadingSegment = (segment, segmentIndex) => (
     <Fragment key={segment.text}>
       <span
-        className={`inline-block ${segment.highlight ?? segmentIndex === 1 ? "text-orange [text-shadow:3px_3px_0_var(--brand-deep-navy)]" : "text-white"}`}
+        className={`inline-block ${segment.highlight ?? segmentIndex === 1 ? "text-orange" : "text-white"}`}
         aria-hidden="true"
       >
         {Array.from(segment.text).map((character, characterIndex) => (
@@ -36,7 +36,7 @@ export default function Hero({ content }) {
 
   return (
     <section
-      className="relative -mt-[90px] box-border flex min-h-[520px] items-center justify-center overflow-hidden px-4 pb-10 pt-[100px] [font-family:Arial,sans-serif] sm:-mt-[100px] sm:min-h-[600px] sm:px-6 sm:pt-[110px] lg:px-8"
+      className="relative -mt-[124px] box-border flex min-h-[600px] items-center justify-center overflow-hidden px-4 pb-16 pt-[120px] sm:-mt-[136px] sm:min-h-[700px] sm:px-6 sm:pt-[130px] lg:px-8"
     >
       <Image
         src="/images/Portofolio.png"
@@ -51,7 +51,7 @@ export default function Hero({ content }) {
         <div className="max-w-4xl text-center">
           <motion.h1
             aria-label={headingSegments.map((segment) => segment.text).join(" ")}
-            className="text-3xl font-black uppercase leading-[1.02] tracking-tight [text-shadow:3px_3px_0_var(--brand-deep-navy)] sm:text-5xl lg:text-[52px]"
+            className="max-w-5xl text-4xl font-black uppercase leading-[0.96] tracking-[-0.04em] sm:text-6xl lg:text-[76px]"
             initial={false}
           >
             {headingSegments.map((segment, segmentIndex) => {
@@ -77,7 +77,7 @@ export default function Hero({ content }) {
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.5, delay: 0.55, ease: "easeOut" }}
             >
-              <ScrollLink className="inline-flex min-h-[52px] items-center justify-center border-2 border-deep-navy bg-orange px-6 py-4 text-sm font-black uppercase tracking-[0.08em] text-deep-navy shadow-[4px_4px_0_var(--brand-deep-navy)] transition duration-200 hover:-translate-y-1 hover:bg-white hover:shadow-[6px_6px_0_var(--brand-deep-navy)] sm:min-w-[210px]" href="#konsultasi">
+              <ScrollLink className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-orange px-7 py-4 text-sm font-black uppercase tracking-[0.08em] text-deep-navy transition duration-200 hover:-translate-y-1 hover:bg-white sm:min-w-[210px]" href="#konsultasi">
                 {content?.primaryCta}
               </ScrollLink>
             </motion.div>
@@ -87,7 +87,7 @@ export default function Hero({ content }) {
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.5, delay: 0.65, ease: "easeOut" }}
             >
-              <ScrollLink className="inline-flex min-h-[52px] items-center justify-center border-2 border-white bg-hot-pink px-6 py-4 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[4px_4px_0_var(--brand-deep-navy)] transition duration-200 hover:-translate-y-1 hover:bg-deep-navy hover:shadow-[6px_6px_0_var(--brand-hot-pink)] sm:min-w-[210px]" href="#layanan">
+              <ScrollLink className="inline-flex min-h-[52px] items-center justify-center rounded-full border border-white/60 bg-white/10 px-7 py-4 text-sm font-black uppercase tracking-[0.08em] text-white backdrop-blur-sm transition duration-200 hover:-translate-y-1 hover:bg-white hover:text-deep-navy sm:min-w-[210px]" href="#layanan">
                 {content?.secondaryCta}
               </ScrollLink>
             </motion.div>

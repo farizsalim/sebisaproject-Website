@@ -2,53 +2,93 @@
 
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   FaBars,
-  FaBriefcase,
   FaChevronDown,
   FaFileLines,
+  FaMoneyBillWave,
+  FaGaugeHigh,
+  FaGear,
+  FaUserPlus,
   FaRightFromBracket,
   FaXmark,
 } from "react-icons/fa6";
 
 const navigationItems = [
   {
-    label: "Konten Website",
-    href: "/cms/content",
+    label: "Dashboard",
+    href: "/cms",
+    icon: FaGaugeHigh,
+  },
+  {
+    label: "Website",
+    href: "/cms/clients",
     icon: FaFileLines,
+    activePaths: ["/cms/quiz", "/cms/clients"],
     children: [
-      { label: "Navigasi Website", section: "navbar" },
-      { label: "Hero / Halaman Utama", section: "hero" },
+      { label: "Kuis konsultasi", href: "/cms/quiz" },
       { label: "Mitra", href: "/cms/clients" },
-      { label: "Tentang Kami", section: "about" },
-      { label: "Pertanyaan Umum", section: "faq" },
-      { label: "CTA Penutup", section: "finalCta" },
-      { label: "Footer", section: "footer" },
     ],
   },
   {
-    label: "Layanan",
+    label: "Penjualan",
     href: "/cms/services",
-    icon: FaBriefcase,
+    icon: FaMoneyBillWave,
+    activePaths: ["/cms/services", "/cms/coupons", "/cms/payments"],
+    children: [
+      { label: "Layanan & paket", href: "/cms/services" },
+      { label: "Kupon", href: "/cms/coupons" },
+      { label: "Ringkasan pembayaran", href: "/cms/payments" },
+      { label: "Transaksi", href: "/cms/payments/transactions" },
+    ],
+  },
+  {
+    label: "Pengaturan",
+    href: "/cms/settings",
+    icon: FaGear,
+  },
+  {
+    label: "Daftarkan akun",
+    href: "/cms/users",
+    icon: FaUserPlus,
+    requiredRole: "SUPER_ADMIN",
   },
 ];
 
 function NavigationLinks({ onNavigate, pathname }) {
-  const [openMenu, setOpenMenu] = useState(pathname === "/cms/content");
+  const searchParams = useSearchParams();
+  const currentSection = searchParams.get("section");
+  const activeGroupPaths = ["/cms/quiz", "/cms/clients", "/cms/services", "/cms/coupons", "/cms/payments"];
+  const hasActiveGroup = activeGroupPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+  const [openMenu, setOpenMenu] = useState(hasActiveGroup);
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    if (hasActiveGroup) setOpenMenu(true);
+  }, [hasActiveGroup]);
+
+  useEffect(() => {
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((session) => setUserRole(session?.user?.role || ""))
+      .catch(() => setUserRole(""));
+  }, []);
 
   return (
     <nav className="mt-8 space-y-1" aria-label="Navigasi CMS">
       <p className="mb-3 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-white/45">
         Workspace
       </p>
-      {navigationItems.map(({ label, href, icon: Icon, children }) => (
-        <div key={href}>
+      {navigationItems.filter((item) => !item.requiredRole || item.requiredRole === userRole).map(({ label, href, icon: Icon, children, activePaths }) => {
+        const isActive = (activePaths || [href]).some((path) => pathname === path || pathname.startsWith(`${path}/`));
+        return <div key={href}>
           {!children ? (
             <Link
-              className={`group flex w-full items-center gap-3 border-l-2 px-3 py-3 text-left text-sm font-bold transition ${pathname === href ? "border-orange bg-white/10 text-white" : "border-transparent text-white/65 hover:border-brand-blue hover:bg-white/10 hover:text-white"}`}
+              className={`group flex w-full items-center gap-3 rounded-xl border-l-2 px-3 py-3 text-left text-sm font-bold transition ${isActive ? "border-orange bg-white/10 text-white" : "border-transparent text-white/65 hover:border-brand-blue hover:bg-white/10 hover:text-white"}`}
               href={href}
+              aria-current={isActive ? "page" : undefined}
               onClick={onNavigate}
             >
               <Icon className="w-4 text-brand-blue-light transition group-hover:text-orange" aria-hidden="true" />
@@ -56,35 +96,37 @@ function NavigationLinks({ onNavigate, pathname }) {
             </Link>
           ) : null}
           {children ? (
-          <button
-            className={`group flex w-full items-center justify-between gap-3 border-l-2 px-3 py-3 text-left text-sm font-bold transition ${pathname === href ? "border-orange bg-white/10 text-white" : "border-transparent text-white/65 hover:border-brand-blue hover:bg-white/10 hover:text-white"}`}
-            type="button"
-            aria-expanded={openMenu}
-            onClick={() => setOpenMenu((open) => !open)}
-          >
-            <span className="flex items-center gap-3">
-              <Icon className="w-4 text-brand-blue-light transition group-hover:text-orange" aria-hidden="true" />
-              {label}
-            </span>
-            <FaChevronDown className={`w-3 transition-transform ${openMenu ? "rotate-180" : ""}`} aria-hidden="true" />
-          </button>
+            <div className={`flex w-full items-center rounded-xl border-l-2 text-sm font-bold transition ${isActive ? "border-orange bg-white/10 text-white" : "border-transparent text-white/65"}`}>
+              <Link className="group flex min-w-0 flex-1 items-center gap-3 px-3 py-3 hover:text-white" href={href} aria-current={isActive ? "page" : undefined} onClick={onNavigate}>
+                <Icon className="w-4 shrink-0 text-brand-blue-light transition group-hover:text-orange" aria-hidden="true" />
+                <span>{label}</span>
+              </Link>
+              <button className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-white/55 transition hover:bg-white/10 hover:text-white" type="button" aria-label={`${openMenu ? "Tutup" : "Buka"} menu ${label}`} aria-expanded={openMenu} onClick={() => setOpenMenu((open) => !open)}>
+                <FaChevronDown className={`w-3 transition-transform ${openMenu ? "rotate-180" : ""}`} aria-hidden="true" />
+              </button>
+            </div>
           ) : null}
           {openMenu ? (
             children ? <div className="ml-4 border-l border-white/15 pl-3">
-              {children.map(({ label: childLabel, section, href: childHref }) => (
-                <Link
-                  className="block border-l-2 border-transparent px-3 py-2 text-xs font-bold text-white/60 transition hover:border-orange hover:bg-white/10 hover:text-white"
+              {children.map(({ label: childLabel, section, href: childHref }) => {
+                const isChildActive = childHref
+                  ? pathname === childHref || pathname.startsWith(`${childHref}/`)
+                  : pathname === href && currentSection === section;
+                return <Link
+                  className={`relative block rounded-lg border-l-2 px-3 py-2 text-xs font-bold transition ${isChildActive ? "border-orange bg-orange/15 text-white" : "border-transparent text-white/60 hover:border-orange hover:bg-white/10 hover:text-white"}`}
                   href={childHref || `${href}?section=${section}`}
+                  aria-current={isChildActive ? "page" : undefined}
                   key={childHref || section}
                   onClick={onNavigate}
                 >
+                  {isChildActive ? <span className="absolute -left-[5px] top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-orange" /> : null}
                   {childLabel}
-                </Link>
-              ))}
+                </Link>;
+              })}
             </div> : null
           ) : null}
-        </div>
-      ))}
+        </div>;
+      })}
     </nav>
   );
 }
@@ -102,7 +144,7 @@ export default function CmsSidebar() {
       <button
         aria-expanded={isOpen}
         aria-label={isOpen ? "Tutup sidebar" : "Buka sidebar"}
-        className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center border-2 border-deep-navy bg-orange text-deep-navy shadow-[3px_3px_0_var(--brand-hot-pink)] lg:hidden"
+        className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-full border-2 border-deep-navy bg-orange text-deep-navy shadow-[0_8px_20px_rgb(23_36_61_/_22%)] lg:hidden"
         type="button"
         onClick={() => setIsOpen((open) => !open)}
       >
@@ -124,15 +166,15 @@ export default function CmsSidebar() {
         }`}
       >
         <div className="flex items-start justify-between gap-4">
-          <Link className="min-w-0" href="/cms/content" onClick={() => setIsOpen(false)}>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue-light">
+          <Link className="min-w-0" href="/cms" onClick={() => setIsOpen(false)}>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue-light">
               Sebisa Project
             </p>
             <p className="mt-2 text-2xl font-black tracking-tight text-white">CMS</p>
           </Link>
           <button
             aria-label="Tutup sidebar"
-            className="flex h-9 w-9 items-center justify-center border border-white/20 text-white/60 transition hover:border-hot-pink hover:bg-hot-pink hover:text-deep-navy lg:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition hover:border-hot-pink hover:bg-hot-pink hover:text-deep-navy lg:hidden"
             type="button"
             onClick={() => setIsOpen(false)}
           >

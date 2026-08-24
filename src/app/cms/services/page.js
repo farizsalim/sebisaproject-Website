@@ -18,8 +18,8 @@ export default async function CmsServicesPage() {
         <div className="brand-top-line h-2" />
         <div className="mx-auto max-w-[1440px] px-5 pb-12 pt-20 sm:px-8 lg:px-10 lg:pt-10">
           <header className="border-b-2 border-deep-navy/10 pb-8">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">Website</p>
-            <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">Layanan</h1>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">Penjualan</p>
+            <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">Layanan &amp; paket</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
               Kelola kategori, harga, deskripsi, dan promo layanan yang tampil di website.
             </p>
