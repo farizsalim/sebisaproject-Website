@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import fallbackServices from "../../../public/data/services.json";
+import fallbackCaseStudies from "../../../public/data/case-studies.json";
+import fallbackTeam from "../../../public/data/team.json";
+import fallbackTestimonials from "../../../public/data/testimonials.json";
 
 export const fallbackContent = {
+  caseStudies: fallbackCaseStudies,
   hero: {
     headingSegments: [
       { text: "Punya", spaceAfter: true, highlight: false },
@@ -202,15 +206,86 @@ const fallbackClients = [
 ].map((filename, sortOrder) => ({
   id: `fallback-client-${sortOrder}`,
   name: `Mitra ${sortOrder + 1}`,
-  logoPath: `/Client/${filename}`,
+  logoPath: `/api/media/mitra/${filename}`,
   isPublished: true,
   sortOrder,
 }));
 
 export async function getSiteContent(contentKeys) {
-  return Object.fromEntries(
+  const content = Object.fromEntries(
     contentKeys.map((contentKey) => [contentKey, fallbackContent[contentKey]]),
   );
+
+  try {
+    const rows = await prisma.siteContent.findMany({
+      where: { contentKey: { in: contentKeys }, isPublished: true },
+      select: { contentKey: true, value: true },
+    });
+
+    for (const row of rows) content[row.contentKey] = row.value;
+  } catch {
+    return content;
+  }
+
+  return content;
+}
+
+export async function getCaseStudies() {
+  try {
+    const projects = await prisma.portfolioProject.findMany({
+      where: { isPublished: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+      include: {
+        media: {
+          where: { isPublished: true },
+          orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+        },
+      },
+    });
+
+    if (projects.length === 0) return fallbackCaseStudies;
+
+    return projects.map((project) => ({
+      id: project.slug,
+      eyebrow: project.category || project.clientName,
+      title: project.title,
+      description: project.description,
+      client: project.clientName,
+      instagram: project.instagram,
+      result: project.result,
+      services: project.category ? [{ label: project.category, description: "", href: "" }] : [],
+      media: project.media.map((media) => ({
+        type: media.mediaType.toLowerCase(),
+        channel: media.section === "BEHIND_SCENES" ? "Behind the scene" : "Portfolio",
+        caption: media.caption,
+        src: media.filePath,
+        alt: media.altText,
+        position: "center",
+        href: "",
+      })),
+    }));
+  } catch {
+    return fallbackCaseStudies;
+  }
+}
+
+export async function getBehindScenes() {
+  try {
+    const items = await prisma.behindScene.findMany({
+      where: { isPublished: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    });
+
+    return items.map((item) => ({
+      id: item.id,
+      type: item.mediaType.toLowerCase(),
+      caption: item.description,
+      src: item.filePath,
+      alt: item.altText || item.description,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export async function getServices() {
@@ -260,5 +335,33 @@ export async function getClients() {
     return clients.length > 0 ? clients : fallbackClients;
   } catch {
     return fallbackClients;
+  }
+}
+
+export async function getTeams() {
+  try {
+    let groups = await prisma.teamGroup.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }], include: { members: { where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] } } });
+    if (groups.length === 0) {
+      for (const [groupIndex, group] of fallbackTeam.entries()) {
+        await prisma.teamGroup.create({ data: { name: group.name, description: group.description, sortOrder: groupIndex, members: { create: group.members.map((member, memberIndex) => ({ name: member.name, role: member.role, description: member.description, imagePath: member.image || null, sortOrder: memberIndex })) } } });
+      }
+      groups = await prisma.teamGroup.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }], include: { members: { where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] } } });
+    }
+    return groups.map((group) => ({ name: group.name, description: group.description, members: group.members.map((member) => ({ name: member.name, role: member.role, description: member.description, image: member.imagePath })) }));
+  } catch {
+    return fallbackTeam;
+  }
+}
+
+export async function getTestimonials() {
+  try {
+    let testimonials = await prisma.testimonial.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
+    if (testimonials.length === 0) {
+      await prisma.testimonial.createMany({ data: fallbackTestimonials.data.map((item, sortOrder) => ({ ...item, sortOrder })) });
+      testimonials = await prisma.testimonial.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
+    }
+    return testimonials;
+  } catch {
+    return fallbackTestimonials.data;
   }
 }

@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `portfolio_media` MODIFY `caption` TEXT NOT NULL DEFAULT '';
+ALTER TABLE `portfolio_media` MODIFY `caption` TEXT NOT NULL;

@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import TeamDirectory from "@/components/TeamDirectory";
+import { getTeams } from "@/lib/content/siteContent";
 
 export const metadata = {
   title: "Our Team | Sebisa Project",
@@ -8,7 +9,8 @@ export const metadata = {
     "Kenali tim Sebisa Project yang bekerja di balik setiap strategi dan karya digital.",
 };
 
-export default function OurTeamPage() {
+export default async function OurTeamPage() {
+  const teams = await getTeams();
   return (
     <div className="flex min-h-full flex-1 flex-col bg-[#F4FBFE] [font-family:Arial,sans-serif]">
       <Navbar />
@@ -33,7 +35,7 @@ export default function OurTeamPage() {
 
         <section className="brand-light-gradient px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
           <div className="mx-auto max-w-[1240px]">
-            <TeamDirectory />
+            <TeamDirectory initialTeams={teams} />
           </div>
         </section>
       </main>

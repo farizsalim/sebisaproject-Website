@@ -3,6 +3,7 @@ import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { hashPassword } from "../src/lib/auth/password";
 import servicesSeed from "../public/data/services.json";
+import caseStudiesSeed from "../public/data/case-studies.json";
 
 const databaseUrl = process.env.DATABASE_URL;
 const superAdminPassword = process.env.SEED_SUPERADMIN_PASSWORD;
@@ -230,45 +231,50 @@ async function main() {
       select: { id: true, email: true, role: true, status: true },
     });
 
-    await prisma.$transaction(async (transaction) => {
-      await transaction.service.deleteMany();
-      await transaction.serviceCategory.deleteMany();
+    const paymentOrderCount = await prisma.paymentOrder.count();
 
-      for (const [categoryIndex, category] of servicesSeed.entries()) {
-        await transaction.serviceCategory.create({
-          data: {
-            id: category.id,
-            category: category.category,
-            icon: category.icon,
-            sortOrder: categoryIndex,
-            services: {
-              create: category.services.map((service, serviceIndex) => {
-                const serviceData = service as typeof service & {
-                  originalPrice?: string;
-                  flashSale?: boolean;
-                  discount?: number;
-                  flashSaleEndsAt?: string | null;
-                };
+    if (paymentOrderCount === 0) {
+      await prisma.$transaction(async (transaction) => {
+        await transaction.service.deleteMany();
+        await transaction.serviceCategory.deleteMany();
 
-                return {
-                  name: serviceData.name,
-                  originalPrice: serviceData.originalPrice || "",
-                  price: serviceData.price,
-                  duration: serviceData.duration || "",
-                  description: serviceData.description,
-                  benefits: serviceData.description.split(",").map((benefit) => benefit.trim()).filter(Boolean),
-                  isRecommended: serviceData.name.toLowerCase().includes("pro"),
-                  flashSale: serviceData.flashSale || false,
-                  discount: serviceData.discount || 0,
-                  flashSaleEndsAt: serviceData.flashSaleEndsAt ? new Date(serviceData.flashSaleEndsAt) : null,
-                  sortOrder: serviceIndex,
-                };
-              }),
+        for (const [categoryIndex, category] of servicesSeed.entries()) {
+          await transaction.serviceCategory.create({
+            data: {
+              id: category.id,
+              category: category.category,
+              icon: category.icon,
+              sortOrder: categoryIndex,
+              services: {
+                create: category.services.map((service, serviceIndex) => {
+                  const serviceData = service as typeof service & {
+                    originalPrice?: string;
+                    flashSale?: boolean;
+                    discount?: number;
+                    flashSaleEndsAt?: string | null;
+                  };
+
+                  return {
+                    name: serviceData.name,
+                    originalPrice: serviceData.originalPrice || "",
+                    price: serviceData.price,
+                    duration: serviceData.duration || "",
+                    description: serviceData.description,
+                    benefits: serviceData.description.split(",").map((benefit) => benefit.trim()).filter(Boolean),
+                    isRecommended: serviceData.name.toLowerCase().includes("pro"),
+                    flashSale: serviceData.flashSale || false,
+                    discount: serviceData.discount || 0,
+                    flashSaleEndsAt: serviceData.flashSaleEndsAt ? new Date(serviceData.flashSaleEndsAt) : null,
+                    sortOrder: serviceIndex,
+                  };
+                }),
+              },
             },
-          },
-        });
+          });
+        }
       }
-    });
+      );
+    }
 
     await prisma.siteContent.deleteMany({ where: { contentKey: "services" } });
 
@@ -277,6 +283,50 @@ async function main() {
         where: { contentKey: content.contentKey },
         update: { value: content.value, isPublished: true },
         create: content,
+      });
+    }
+
+    for (const [sortOrder, project] of caseStudiesSeed.entries()) {
+      const savedProject = await prisma.portfolioProject.upsert({
+        where: { slug: project.id },
+        update: {
+          clientName: project.client,
+          title: project.title,
+          category: project.eyebrow,
+          description: project.description,
+          result: project.result,
+          instagram: project.instagram,
+          sortOrder,
+          isPublished: true,
+        },
+        create: {
+          clientName: project.client,
+          title: project.title,
+          slug: project.id,
+          category: project.eyebrow,
+          description: project.description,
+          result: project.result,
+          instagram: project.instagram,
+          sortOrder,
+          isPublished: true,
+        },
+      });
+
+      await prisma.portfolioMedia.deleteMany({ where: { projectId: savedProject.id } });
+      await prisma.portfolioMedia.createMany({
+        data: project.media.map((media, mediaOrder) => ({
+          projectId: savedProject.id,
+          mediaType: media.type === "video" ? "VIDEO" : "IMAGE",
+          section: media.channel.toLowerCase().includes("behind") ? "BEHIND_SCENES" : "PORTFOLIO",
+          filePath: media.src,
+          originalName: media.src.split("/").pop() || "",
+          mimeType: media.type === "video" ? "video/mp4" : "image/*",
+          fileSize: 0,
+          caption: media.caption,
+          altText: media.alt,
+          sortOrder: mediaOrder,
+          isPublished: true,
+        })),
       });
     }
 

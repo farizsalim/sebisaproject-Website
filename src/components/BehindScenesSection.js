@@ -1,91 +1,41 @@
 "use client";
 
-import axios from "axios";
 import { motion } from "motion/react";
-import { FaArrowLeft, FaArrowRight, FaPause, FaPlay } from "react-icons/fa6";
-import { useEffect, useRef, useState } from "react";
+import { FaPlay, FaXmark } from "react-icons/fa6";
+import { useEffect, useState } from "react";
 
-function BehindSceneVideo({ scene }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [videoElement, setVideoElement] = useState(null);
-
-  const toggleVideo = async () => {
-    if (!videoElement) return;
-
-    if (videoElement.paused) {
-      await videoElement.play();
-    } else {
-      videoElement.pause();
-    }
-  };
-
-  const handleVideoPlay = (event) => {
-    document.querySelectorAll("[data-behind-scenes-video]").forEach((video) => {
-      if (video !== event.currentTarget) video.pause();
-    });
-    setIsPlaying(true);
-  };
-
+function BehindSceneThumbnail({ scene }) {
   return (
-    <>
-      <video
-        aria-label={scene.alt}
-        className="h-full w-full bg-deep-navy object-contain"
-        controls
-        data-behind-scenes-video
-        loop
-        muted
-        onPause={() => setIsPlaying(false)}
-        onPlay={handleVideoPlay}
-        preload="metadata"
-        playsInline
-        ref={setVideoElement}
-        src={scene.src}
-      />
-      <button
-        aria-label={isPlaying ? "Jeda video behind the scenes" : "Putar video behind the scenes"}
-        className={`absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/60 bg-orange text-deep-navy shadow-[0_10px_30px_rgb(0_0_0_/_30%)] transition duration-300 hover:scale-105 hover:bg-white sm:h-16 sm:w-16 ${isPlaying ? "pointer-events-none opacity-0" : "opacity-100"}`}
-        title={isPlaying ? "Jeda video" : "Putar video"}
-        type="button"
-        onClick={toggleVideo}
-      >
-        {isPlaying ? <FaPause aria-hidden="true" /> : <FaPlay aria-hidden="true" className="ml-1" />}
-      </button>
-    </>
+    <div className="relative h-full w-full bg-deep-navy">
+      {scene.type === "video" ? (
+        <video aria-hidden="true" className="h-full w-full object-cover" muted preload="metadata" playsInline src={scene.src} />
+      ) : (
+        <img alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" src={scene.src} draggable="false" />
+      )}
+      {scene.type === "video" ? (
+        <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-deep-navy/75 text-sm text-white backdrop-blur-sm">
+          <FaPlay aria-hidden="true" className="ml-0.5" />
+        </span>
+      ) : null}
+    </div>
   );
 }
 
-export default function BehindScenesSection() {
-  const [behindScenes, setBehindScenes] = useState([]);
-  const behindScenesRailRef = useRef(null);
-
-  const scrollBehindScenes = (direction) => {
-    const rail = behindScenesRailRef.current;
-    if (!rail) return;
-
-    behindScenesRailRef.current?.scrollBy({
-      left: direction * Math.max(320, rail.clientWidth * 0.82),
-      behavior: "smooth",
-    });
-  };
+export default function BehindScenesSection({ behindScenes = [] }) {
+  const [activeScene, setActiveScene] = useState(null);
 
   useEffect(() => {
-    const loadBehindScenes = async () => {
-      try {
-        const response = await axios.get("/data/case-studies.json");
-        const items = response.data.flatMap((project) =>
-          project.media
-            .filter((media) => media.channel.toLowerCase().includes("behind"))
-            .map((media) => ({ ...media, client: project.client })),
-        );
-        setBehindScenes(items);
-      } catch {
-        setBehindScenes([]);
-      }
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setActiveScene(null);
     };
-
-    loadBehindScenes();
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = activeScene ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [activeScene]);
 
   return (
     <section
@@ -117,45 +67,19 @@ export default function BehindScenesSection() {
         </motion.div>
 
         {behindScenes.length > 0 ? (
-          <div className="mt-10">
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.12em] text-white/55">
+          <div className="mx-auto mt-10 w-full max-w-[780px]">
+            <div className="mb-5 flex items-center justify-center gap-3 text-xs font-bold uppercase tracking-[0.12em] text-white/55">
                 <span>{behindScenes.length} dokumentasi</span>
                 <span className="h-1 w-1 rounded-full bg-orange" aria-hidden="true" />
-                <span className="hidden sm:inline">Geser untuk melihat proses lainnya</span>
-              </div>
-              <div className="flex gap-2">
-              <button
-                aria-label="Behind the scenes sebelumnya"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white transition hover:-translate-y-0.5 hover:border-orange hover:bg-orange hover:text-deep-navy disabled:cursor-not-allowed disabled:opacity-35"
-                title="Behind the scenes sebelumnya"
-                type="button"
-                onClick={() => scrollBehindScenes(-1)}
-                disabled={behindScenes.length < 2}
-              >
-                <FaArrowLeft aria-hidden="true" />
-              </button>
-              <button
-                aria-label="Behind the scenes berikutnya"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white transition hover:-translate-y-0.5 hover:border-orange hover:bg-orange hover:text-deep-navy disabled:cursor-not-allowed disabled:opacity-35"
-                title="Behind the scenes berikutnya"
-                type="button"
-                onClick={() => scrollBehindScenes(1)}
-                disabled={behindScenes.length < 2}
-              >
-                <FaArrowRight aria-hidden="true" />
-              </button>
-              </div>
             </div>
             <div
-              ref={behindScenesRailRef}
-              aria-label="Carousel behind the scenes"
-              className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-1 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-6 sm:px-3"
+              aria-label="Galeri behind the scenes"
+              className="mx-auto grid max-w-[720px] grid-cols-3 gap-2 sm:gap-3"
               role="list"
             >
             {behindScenes.map((scene, index) => (
               <motion.article
-                className="group flex w-[min(86vw,540px)] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-white/15 bg-white/[0.08] shadow-[0_18px_45px_rgb(0_0_0_/_20%)] backdrop-blur-sm"
+                className="group aspect-square min-w-0 overflow-hidden rounded-lg border border-white/15 bg-white/[0.08] shadow-[0_12px_30px_rgb(0_0_0_/_18%)]"
                 key={`${scene.client}-${scene.src}`}
                 role="listitem"
                 initial={{ opacity: 0, y: 20 }}
@@ -163,28 +87,10 @@ export default function BehindScenesSection() {
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.55, delay: index * 0.08 }}
               >
-                <div className="relative aspect-video overflow-hidden bg-deep-navy">
-                  {scene.type === "video" ? (
-                    <BehindSceneVideo scene={scene} />
-                  ) : (
-                    <img
-                      alt={scene.alt}
-                      className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]"
-                      loading="lazy"
-                      src={scene.src}
-                      draggable="false"
-                    />
-                  )}
-                </div>
-                <div className="flex min-h-[104px] flex-1 flex-col justify-between gap-4 border-t border-white/15 px-4 py-4 sm:px-5">
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-orange">{scene.channel}</p>
-                    <p className="mt-2 text-sm font-bold leading-5 text-white sm:text-base">{scene.caption}</p>
-                  </div>
-                  <span className="w-fit rounded-full border border-brand-blue-light/40 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-brand-blue-light">
-                    {scene.client}
-                  </span>
-                </div>
+                <button aria-label={`Buka ${scene.caption || "dokumentasi behind the scenes"}`} className="relative block h-full w-full overflow-hidden text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-inset" type="button" onClick={() => setActiveScene(scene)}>
+                  <BehindSceneThumbnail scene={scene} />
+                  <span className="absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-deep-navy/90 via-deep-navy/40 to-transparent px-3 pb-3 pt-12 text-xs font-bold text-white sm:block sm:px-4 sm:pb-4 sm:text-sm">{scene.caption}</span>
+                </button>
               </motion.article>
             ))}
             </div>
@@ -193,6 +99,27 @@ export default function BehindScenesSection() {
           <p className="mt-10 text-sm text-white/70">Dokumentasi proses segera hadir.</p>
         )}
       </div>
+
+      {activeScene ? (
+        <div aria-labelledby="behind-scene-modal-title" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-deep-navy/90 p-4 backdrop-blur-sm sm:p-6" role="dialog" onClick={() => setActiveScene(null)}>
+          <div className="relative w-full max-w-3xl overflow-hidden rounded-2xl border border-white/20 bg-deep-navy shadow-[0_20px_70px_rgb(0_0_0_/_45%)]" onClick={(event) => event.stopPropagation()}>
+            <button aria-label="Tutup behind the scenes" className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-deep-navy/80 text-white transition hover:bg-orange hover:text-deep-navy" title="Tutup" type="button" onClick={() => setActiveScene(null)}>
+              <FaXmark aria-hidden="true" />
+            </button>
+            <div className="max-h-[75vh] bg-black">
+              {activeScene.type === "video" ? (
+                <video aria-label={activeScene.alt} autoPlay className="mx-auto max-h-[75vh] w-full object-contain" controls loop playsInline src={activeScene.src} />
+              ) : (
+                <img alt={activeScene.alt} className="mx-auto max-h-[75vh] w-full object-contain" src={activeScene.src} />
+              )}
+            </div>
+            <div className="border-t border-white/15 px-4 py-4 sm:px-6">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-orange">Behind the scenes</p>
+              <h3 id="behind-scene-modal-title" className="mt-2 text-base font-bold text-white sm:text-lg">{activeScene.caption}</h3>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

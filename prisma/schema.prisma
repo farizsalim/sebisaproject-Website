@@ -40,6 +40,17 @@ enum CouponType {
   FIXED
 }
 
+enum PortfolioMediaType {
+  IMAGE
+  VIDEO
+}
+
+enum PortfolioMediaSection {
+  PORTFOLIO
+  BEHIND_SCENES
+  BOTH
+}
+
 model User {
   id            String     @id @default(cuid())
   name          String
@@ -275,4 +286,110 @@ model Client {
   updatedAt   DateTime @updatedAt
 
   @@index([isPublished, sortOrder])
+}
+
+model TeamGroup {
+  id          String       @id @default(cuid())
+  name        String
+  description String       @db.Text
+  sortOrder   Int          @default(0)
+  isPublished Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  members     TeamMember[]
+
+  @@index([isPublished, sortOrder])
+  @@map("team_group")
+}
+
+model TeamMember {
+  id          String    @id @default(cuid())
+  groupId     String
+  name        String
+  role        String
+  description String    @db.Text
+  imagePath   String?
+  sortOrder   Int       @default(0)
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  group       TeamGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId, isPublished, sortOrder])
+  @@map("team_member")
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  client      String
+  brand       String
+  rating      Float
+  testimoni   String   @db.Text
+  sortOrder   Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+  @@map("testimonial")
+}
+
+model PortfolioProject {
+  id          String           @id @default(cuid())
+  clientName  String
+  title       String
+  slug        String           @unique
+  category    String           @default("")
+  description String           @db.Text
+  result      String           @db.Text
+  instagram   String           @default("")
+  isPublished Boolean          @default(true)
+  sortOrder   Int              @default(0)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  media       PortfolioMedia[]
+
+  @@index([isPublished, sortOrder])
+  @@map("portfolio_project")
+}
+
+model PortfolioMedia {
+  id            String               @id @default(cuid())
+  projectId     String
+  mediaType     PortfolioMediaType
+  section       PortfolioMediaSection @default(PORTFOLIO)
+  filePath      String
+  thumbnailPath String?
+  originalName  String               @default("")
+  mimeType      String               @default("")
+  fileSize      Int                  @default(0)
+  caption       String               @db.Text
+  altText       String               @default("")
+  sortOrder     Int                  @default(0)
+  isPublished   Boolean              @default(true)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  project       PortfolioProject     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, section, isPublished, sortOrder])
+  @@map("portfolio_media")
+}
+
+model BehindScene {
+  id            String   @id @default(cuid())
+  mediaType     PortfolioMediaType
+  filePath      String
+  thumbnailPath String?
+  originalName  String   @default("")
+  mimeType      String   @default("")
+  fileSize      Int      @default(0)
+  description   String   @db.Text
+  altText       String   @default("")
+  sortOrder     Int      @default(0)
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+  @@map("behind_scene")
 }

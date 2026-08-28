@@ -24,8 +24,24 @@ const recommendationGroups = [
 function getRecommendationServices(services) {
   return recommendationGroups.map((group) => {
     const members = services.filter((service) => group.matches.includes(service.name));
-    return members[0] ? { ...members[0], recommendationId: group.id, recommendationName: group.label, recommendationDescription: group.description, memberIds: members.map((service) => service.id) } : null;
+    return members[0] ? { ...members[0], recommendationId: group.id, recommendationName: group.label, recommendationDescription: group.description, memberIds: members.map((service) => service.id), memberNames: members.map((service) => service.name) } : null;
   }).filter(Boolean);
+}
+
+function getDirectionScoreSummary(nodes, recommendationServices) {
+  return recommendationServices.map((service) => {
+    const scoredOptions = nodes
+      .filter((node) => node.type === "question")
+      .flatMap((node) => node.data.options || [])
+      .map((option) => Math.max(0, ...(option.scores || []).filter((score) => service.memberIds.includes(score.serviceId)).map((score) => Number(score.score) || 0)))
+      .filter((score) => score > 0);
+
+    return {
+      ...service,
+      highestOptionScore: scoredOptions.length ? Math.max(...scoredOptions) : 0,
+      scoredOptionCount: scoredOptions.length,
+    };
+  });
 }
 
 function serviceOptions(services, scores, onChange) {
@@ -153,6 +169,7 @@ export default function QuizManager() {
   const questionNodes = nodes.filter((node) => node.type === "question");
   const targetOptions = questionNodes.map((node, index) => ({ id: node.id, label: `Pertanyaan ${index + 1}: ${node.data.title}` }));
   const recommendationServices = getRecommendationServices(services);
+  const directionScoreSummary = getDirectionScoreSummary(nodes, recommendationServices);
 
   return (
     <section className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-deep-navy/10 bg-white p-4 shadow-[0_12px_28px_rgb(23_36_61_/_8%)] sm:p-6">
@@ -182,6 +199,21 @@ export default function QuizManager() {
         <p className="mt-3 text-xs leading-5 text-deep-navy/75"><span className="font-black text-deep-navy">Contoh:</span> jika jawaban tentang membuat konten diberi nilai 5 pada Konten &amp; Social Media, kelompok itu mendapat tambahan nilai paling besar dan lebih mungkin direkomendasikan.</p>
         </> : null}
       </aside>
+      <section className="mt-5 rounded-2xl border border-brand-blue/20 bg-brand-blue/5 p-4 sm:p-5" aria-label="Peta skor dan arah rekomendasi">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div><p className="text-xs font-black uppercase tracking-[0.16em] text-brand-blue">Peta skor akhir</p><h3 className="mt-2 text-lg font-black text-deep-navy">Jawaban akan mengarah ke sini</h3><p className="mt-1 text-sm leading-6 text-deep-navy/70">Setiap jawaban menambah skor ke kelompok layanan. Sistem menampilkan dua kelompok dengan total skor tertinggi.</p></div>
+          <span className="shrink-0 rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-deep-navy">Top 2 hasil</span>
+        </div>
+        <div className="mt-4 grid gap-3 lg:grid-cols-3">
+          {directionScoreSummary.map((direction) => <article className="rounded-xl border border-white bg-white p-3" key={direction.recommendationId}>
+            <div className="flex items-start justify-between gap-3"><h4 className="text-sm font-black text-deep-navy">{direction.recommendationName}</h4><span className="shrink-0 rounded-full bg-orange/20 px-2 py-1 text-[10px] font-black text-deep-navy">maks. +{direction.highestOptionScore}</span></div>
+            <p className="mt-2 text-xs leading-5 text-slate-600">{direction.recommendationDescription}</p>
+            <p className="mt-3 border-t border-deep-navy/10 pt-2 text-[11px] font-bold leading-5 text-deep-navy/75">Paket: {direction.memberNames.join(", ") || "Belum ada layanan"}</p>
+            <p className="mt-1 text-[10px] text-slate-500">{direction.scoredOptionCount} pilihan jawaban memiliki skor</p>
+          </article>)}
+        </div>
+        <p className="mt-3 text-xs leading-5 text-deep-navy/70"><span className="font-black text-deep-navy">Cara membaca:</span> angka “maks.” adalah kontribusi terbesar dari satu pilihan jawaban, bukan total hasil akhir. Total akhir bergantung pada seluruh jawaban yang dipilih, lalu dua skor terbesar menjadi rekomendasi.</p>
+      </section>
       <div className="mt-6 grid gap-5">
         {questionNodes.map((node, questionIndex) => (
           <article className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-deep-navy/10 bg-white p-4 sm:p-5" key={node.id}>

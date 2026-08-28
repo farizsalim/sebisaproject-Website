@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 
 const sectionLabels = {
   about: "Tentang Kami",
+  caseStudies: "Studi Kasus",
   clients: "Mitra",
   consultationQuiz: "Kuis Konsultasi",
   faq: "Pertanyaan Umum",
@@ -16,11 +17,14 @@ const sectionLabels = {
   navbar: "Navigasi website",
 };
 
-const sectionOrder = ["navbar", "hero", "consultationQuiz", "clients", "about", "faq", "finalCta", "footer"];
+const sectionOrder = ["navbar", "hero", "consultationQuiz", "caseStudies", "clients", "about", "faq", "finalCta", "footer"];
 
 const fieldLabels = {
   answer: "Jawaban",
+  alt: "Teks alternatif media",
   button: "Teks tombol",
+  caption: "Caption media",
+  channel: "Kanal media",
   contactTitle: "Judul kontak",
   description: "Deskripsi",
   eyebrow: "Label kecil",
@@ -38,7 +42,13 @@ const fieldLabels = {
   secondaryCta: "Tombol kedua",
   spaceAfter: "Beri spasi setelah teks",
   slotCta: "Tombol slot",
-  socialLinks: "Link sosial media",
+  instagram: "Link Instagram",
+  linkedin: "Link LinkedIn",
+  tiktok: "Link TikTok",
+  whatsapp: "Link WhatsApp",
+  socialLinks: "Kontak & media sosial",
+  src: "URL media",
+  type: "Jenis media",
   tagline: "Kalimat penutup",
   text: "Teks",
   tickerItems: "Teks berjalan",

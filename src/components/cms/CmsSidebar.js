@@ -26,10 +26,15 @@ const navigationItems = [
     label: "Website",
     href: "/cms/clients",
     icon: FaFileLines,
-    activePaths: ["/cms/quiz", "/cms/clients"],
+    activePaths: ["/cms/quiz", "/cms/clients", "/cms/content", "/cms/behind-scenes", "/cms/team", "/cms/testimonials"],
     children: [
       { label: "Kuis konsultasi", href: "/cms/quiz" },
       { label: "Mitra", href: "/cms/clients" },
+      { label: "Studi kasus", href: "/cms/content" },
+      { label: "Behind the scenes", href: "/cms/behind-scenes" },
+      { label: "Team", href: "/cms/team" },
+      { label: "Testimonials", href: "/cms/testimonials" },
+      { label: "Kontak", href: "/cms/content/settings?section=footer" },
     ],
   },
   {
@@ -60,7 +65,7 @@ const navigationItems = [
 function NavigationLinks({ onNavigate, pathname }) {
   const searchParams = useSearchParams();
   const currentSection = searchParams.get("section");
-  const activeGroupPaths = ["/cms/quiz", "/cms/clients", "/cms/services", "/cms/coupons", "/cms/payments"];
+  const activeGroupPaths = ["/cms/quiz", "/cms/clients", "/cms/content", "/cms/behind-scenes", "/cms/team", "/cms/testimonials", "/cms/services", "/cms/coupons", "/cms/payments"];
   const hasActiveGroup = activeGroupPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
   const [openMenu, setOpenMenu] = useState(hasActiveGroup);
   const [userRole, setUserRole] = useState(null);
@@ -109,8 +114,9 @@ function NavigationLinks({ onNavigate, pathname }) {
           {openMenu ? (
             children ? <div className="ml-4 border-l border-white/15 pl-3">
               {children.map(({ label: childLabel, section, href: childHref }) => {
+                const childPath = childHref?.split("?")[0];
                 const isChildActive = childHref
-                  ? pathname === childHref || pathname.startsWith(`${childHref}/`)
+                  ? pathname === childPath || pathname.startsWith(`${childPath}/`)
                   : pathname === href && currentSection === section;
                 return <Link
                   className={`relative block rounded-lg border-l-2 px-3 py-2 text-xs font-bold transition ${isChildActive ? "border-orange bg-orange/15 text-white" : "border-transparent text-white/60 hover:border-orange hover:bg-white/10 hover:text-white"}`}

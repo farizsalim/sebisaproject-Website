@@ -8,7 +8,7 @@ const contentPayloadSchema = z.object({
   isPublished: z.boolean().optional().default(true),
 });
 
-const contentOrder = ["navbar", "hero", "consultationQuiz", "clients", "about", "faq", "finalCta", "footer"];
+const contentOrder = ["navbar", "hero", "consultationQuiz", "caseStudies", "clients", "about", "faq", "finalCta", "footer"];
 
 function hasContentAccess(session) {
   return ["SUPER_ADMIN", "ADMIN", "EDITOR"].includes(session?.user?.role);
@@ -59,6 +59,21 @@ export async function listContentController() {
           },
         });
       }
+    }
+
+    const footerContent = await prisma.siteContent.findUnique({
+      where: { contentKey: "footer" },
+      select: { id: true },
+    });
+
+    if (!footerContent) {
+      await prisma.siteContent.create({
+        data: {
+          contentKey: "footer",
+          value: fallbackContent.footer,
+          isPublished: true,
+        },
+      });
     }
 
     const content = await prisma.siteContent.findMany({

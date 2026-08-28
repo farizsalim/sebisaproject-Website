@@ -2,9 +2,10 @@ import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import sharp from "sharp";
+import { storageDirectory, storageUrl } from "@/lib/media/storage";
 
 const maxUploadBytes = 5 * 1024 * 1024;
-const storageDirectory = path.join(process.cwd(), "public", "storage", "mitra");
+const clientStorageDirectory = storageDirectory("mitra");
 
 export async function saveClientLogo(file) {
   if (!file || typeof file.arrayBuffer !== "function") {
@@ -26,16 +27,16 @@ export async function saveClientLogo(file) {
     .webp({ quality: 82, effort: 4 })
     .toBuffer();
   const filename = `${randomUUID()}.webp`;
-  const logoPath = `/storage/mitra/${filename}`;
+  const logoPath = storageUrl("mitra", filename);
 
-  await mkdir(storageDirectory, { recursive: true });
-  await writeFile(path.join(storageDirectory, filename), outputBuffer);
+  await mkdir(clientStorageDirectory, { recursive: true });
+  await writeFile(path.join(clientStorageDirectory, filename), outputBuffer);
 
   return logoPath;
 }
 
 export async function removeClientLogo(logoPath) {
-  if (!logoPath?.startsWith("/storage/mitra/")) return;
+  if (!logoPath?.startsWith("/api/media/mitra/")) return;
   const filename = path.basename(logoPath);
-  await unlink(path.join(storageDirectory, filename)).catch(() => {});
+  await unlink(path.join(clientStorageDirectory, filename)).catch(() => {});
 }

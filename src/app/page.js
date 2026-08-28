@@ -11,13 +11,13 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import FaqSection from "@/components/FaqSection";
 import FinalCtaSection from "@/components/FinalCtaSection";
 import Footer from "@/components/Footer";
-import { getClients, getServices, getSiteContent } from "@/lib/content/siteContent";
+import { getBehindScenes, getCaseStudies, getClients, getServices, getSiteContent, getTeams, getTestimonials } from "@/lib/content/siteContent";
 import { getPublishedQuiz } from "@/lib/quiz/quizController";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [content, quiz, services, clients] = await Promise.all([
+  const [content, quiz, services, clients, caseStudies, behindScenes, teams, testimonials] = await Promise.all([
     getSiteContent([
     "hero",
     "navbar",
@@ -30,6 +30,10 @@ export default async function Home() {
     getPublishedQuiz(),
     getServices(),
     getClients(),
+    getCaseStudies(),
+    getBehindScenes(),
+    getTeams(),
+    getTestimonials(),
   ]);
 
   return (
@@ -40,9 +44,9 @@ export default async function Home() {
       <ConsultationSection content={quiz} />
       <ServicesSection content={services} />
       <ClientsSection content={content.clients} clients={clients} />
-      <CaseStudySection />
-      <BehindScenesSection />
-      <TestimonialsSection />
+      <CaseStudySection caseStudies={caseStudies} />
+      <BehindScenesSection behindScenes={behindScenes} />
+      <TestimonialsSection testimonials={testimonials} />
       <AboutSection content={content.about} />
       <FaqSection content={content.faq} />
       <FinalCtaSection content={content.finalCta} />

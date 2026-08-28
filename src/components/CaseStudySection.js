@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { createPortal } from "react-dom";
@@ -22,8 +21,8 @@ const caseSlideVariants = {
   }),
 };
 
-export default function CaseStudySection() {
-  const [caseStudies, setCaseStudies] = useState([]);
+export default function CaseStudySection({ caseStudies: initialCaseStudies = [] }) {
+  const [caseStudies, setCaseStudies] = useState(initialCaseStudies);
   const [activeIndex, setActiveIndex] = useState(0);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState(1);
@@ -33,20 +32,11 @@ export default function CaseStudySection() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const loadCaseStudies = async () => {
-      try {
-        const response = await axios.get("/data/case-studies.json");
-        setCaseStudies(response.data);
-        setCarouselIndex(1);
-      } catch {
-        setError("Studi kasus belum dapat dimuat.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadCaseStudies();
-  }, []);
+    setCaseStudies(initialCaseStudies);
+    setCarouselIndex(initialCaseStudies.length > 1 ? 1 : 0);
+    setIsLoading(false);
+    setError(initialCaseStudies.length > 0 ? "" : "Studi kasus belum dapat dimuat.");
+  }, [initialCaseStudies]);
 
   const activeCase = caseStudies[activeIndex];
   useEffect(() => {

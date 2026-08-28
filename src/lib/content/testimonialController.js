@@ -1,0 +1,8 @@
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+
+async function allowed() { return ["SUPER_ADMIN", "ADMIN", "EDITOR"].includes((await auth())?.user?.role); }
+const fields = (item) => ({ client: String(item.client || ""), brand: String(item.brand || ""), rating: Math.min(5, Math.max(0, Number(item.rating || 0))), testimoni: String(item.testimoni || ""), isPublished: item.isPublished !== false, sortOrder: Number(item.sortOrder || 0) });
+export async function listTestimonialsController() { if (!await allowed()) return Response.json({ error: "Tidak memiliki akses" }, { status: 403 }); return Response.json({ testimonials: await prisma.testimonial.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] }) }); }
+export async function saveTestimonialController(request) { if (!await allowed()) return Response.json({ error: "Tidak memiliki akses" }, { status: 403 }); try { const body = await request.json(); const testimonial = body.id ? await prisma.testimonial.update({ where: { id: body.id }, data: fields(body) }) : await prisma.testimonial.create({ data: fields(body) }); return Response.json({ testimonial }); } catch (error) { return Response.json({ error: error.message || "Gagal menyimpan testimoni" }, { status: 400 }); } }
+export async function deleteTestimonialController(request) { if (!await allowed()) return Response.json({ error: "Tidak memiliki akses" }, { status: 403 }); try { await prisma.testimonial.delete({ where: { id: (await request.json()).id } }); return Response.json({ success: true }); } catch { return Response.json({ error: "Gagal menghapus testimoni" }, { status: 400 }); } }

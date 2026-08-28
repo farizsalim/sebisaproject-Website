@@ -1,15 +1,12 @@
 import { auth } from "@/auth";
-import CaseStudyManager from "@/components/cms/CaseStudyManager";
 import CmsSidebar from "@/components/cms/CmsSidebar";
+import ContactManager from "@/components/cms/ContactManager";
 import { redirect } from "next/navigation";
 
-export const metadata = {
-  title: "Konten Website | CMS Sebisa Project",
-};
+export const metadata = { title: "Kontak | CMS Sebisa Project" };
 
-export default async function CmsContentPage() {
-  const session = await auth();
-  if (!session) redirect("/login");
+export default async function CmsContentSettingsPage() {
+  if (!await auth()) redirect("/login");
 
   return (
     <div className="min-h-screen bg-brand-surface text-deep-navy">
@@ -19,12 +16,12 @@ export default async function CmsContentPage() {
         <div className="mx-auto max-w-[1440px] px-5 pb-12 pt-20 sm:px-8 lg:px-10 lg:pt-10">
           <header className="border-b-2 border-deep-navy/10 pb-8">
             <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">Website</p>
-            <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">Studi kasus</h1>
+            <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">Kontak</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-              Kelola portofolio, deskripsi project, layanan, media, dan link Instagram yang tampil untuk pengunjung.
+              Kelola link media sosial dan WhatsApp Sebisa Project.
             </p>
           </header>
-          <div className="mt-8"><CaseStudyManager /></div>
+          <div className="mt-8"><ContactManager /></div>
         </div>
       </main>
     </div>

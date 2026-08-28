@@ -1,11 +1,8 @@
 "use client";
 
-import axios from "axios";
 import Image from "next/image";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
-
-const TEAM_IMAGE_VERSION = "20260811";
 
 function getInitials(name) {
   return name
@@ -23,7 +20,7 @@ function MemberCard({ member, index }) {
       <div className="relative mb-4 aspect-square overflow-hidden rounded-xl border border-deep-navy/10 bg-brand-surface-alt">
         {member.image ? (
           <Image
-            src={`${member.image}?v=${TEAM_IMAGE_VERSION}`}
+            src={member.image}
             alt={`Foto ${member.name}`}
             fill
             sizes="(max-width: 640px) 86vw, (max-width: 1024px) 310px, 340px"
@@ -117,24 +114,13 @@ function TeamCarousel({ team }) {
   );
 }
 
-export default function TeamDirectory() {
-  const [teams, setTeams] = useState([]);
+export default function TeamDirectory({ initialTeams = [] }) {
+  const [teams, setTeams] = useState(initialTeams);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const loadTeams = async () => {
-      try {
-        const response = await axios.get("/data/team.json");
-        setTeams(response.data);
-      } catch {
-        setError("Data tim belum dapat dimuat.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadTeams();
+    setIsLoading(false);
   }, []);
 
   if (isLoading) {

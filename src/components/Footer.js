@@ -17,7 +17,14 @@ const defaultFooterContent = {
 };
 
 export default function Footer({ content }) {
-  const footerContent = content || defaultFooterContent;
+  const footerContent = {
+    ...defaultFooterContent,
+    ...(content || {}),
+    socialLinks: {
+      ...defaultFooterContent.socialLinks,
+      ...(content?.socialLinks || {}),
+    },
+  };
   const navigationLinks = footerContent.navigationLinks;
   const socialLinks = footerContent.socialLinks;
   const sectionLinks = [

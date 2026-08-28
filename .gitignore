@@ -44,3 +44,4 @@ next-env.d.ts
 /public/Yuk Kebab
 /public/Client
 /src/generated/prisma
+/storage

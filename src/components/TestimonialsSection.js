@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { FaArrowLeft, FaArrowRight, FaStar } from "react-icons/fa6";
 
 function Rating({ value }) {
@@ -15,26 +15,8 @@ function Rating({ value }) {
   );
 }
 
-export default function TestimonialsSection() {
-  const [testimonials, setTestimonials] = useState([]);
+export default function TestimonialsSection({ testimonials = [] }) {
   const railRef = useRef(null);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    fetch("/data/testimonials.json")
-      .then((response) => (response.ok ? response.json() : Promise.reject(new Error("Gagal memuat testimoni"))))
-      .then((result) => {
-        if (isMounted) setTestimonials(result.data || []);
-      })
-      .catch(() => {
-        if (isMounted) setTestimonials([]);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const scrollTestimonials = (direction) => {
     railRef.current?.scrollBy({ left: direction * 360, behavior: "smooth" });
