@@ -1,11 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import fallbackServices from "../../../public/data/services.json";
-import fallbackCaseStudies from "../../../public/data/case-studies.json";
-import fallbackTeam from "../../../public/data/team.json";
-import fallbackTestimonials from "../../../public/data/testimonials.json";
 
 export const fallbackContent = {
-  caseStudies: fallbackCaseStudies,
+  caseStudies: [],
   hero: {
     headingSegments: [
       { text: "Punya", spaceAfter: true, highlight: false },
@@ -212,22 +208,16 @@ const fallbackClients = [
 }));
 
 export async function getSiteContent(contentKeys) {
-  const content = Object.fromEntries(
-    contentKeys.map((contentKey) => [contentKey, fallbackContent[contentKey]]),
-  );
-
   try {
     const rows = await prisma.siteContent.findMany({
       where: { contentKey: { in: contentKeys }, isPublished: true },
       select: { contentKey: true, value: true },
     });
 
-    for (const row of rows) content[row.contentKey] = row.value;
+    return Object.fromEntries(rows.map((row) => [row.contentKey, row.value]));
   } catch {
-    return content;
+    return {};
   }
-
-  return content;
 }
 
 export async function getCaseStudies() {
@@ -242,8 +232,6 @@ export async function getCaseStudies() {
         },
       },
     });
-
-    if (projects.length === 0) return fallbackCaseStudies;
 
     return projects.map((project) => ({
       id: project.slug,
@@ -265,7 +253,7 @@ export async function getCaseStudies() {
       })),
     }));
   } catch {
-    return fallbackCaseStudies;
+    return [];
   }
 }
 
@@ -300,8 +288,6 @@ export async function getServices() {
       },
     });
 
-    if (categories.length === 0) return fallbackServices;
-
     return categories.map((category) => ({
       id: category.id,
       category: category.category,
@@ -321,7 +307,7 @@ export async function getServices() {
       })),
     }));
   } catch {
-    return fallbackServices;
+    return [];
   }
 }
 
@@ -332,36 +318,25 @@ export async function getClients() {
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
       select: { id: true, name: true, logoPath: true, websiteUrl: true, sortOrder: true },
     });
-    return clients.length > 0 ? clients : fallbackClients;
+    return clients;
   } catch {
-    return fallbackClients;
+    return [];
   }
 }
 
 export async function getTeams() {
   try {
-    let groups = await prisma.teamGroup.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }], include: { members: { where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] } } });
-    if (groups.length === 0) {
-      for (const [groupIndex, group] of fallbackTeam.entries()) {
-        await prisma.teamGroup.create({ data: { name: group.name, description: group.description, sortOrder: groupIndex, members: { create: group.members.map((member, memberIndex) => ({ name: member.name, role: member.role, description: member.description, imagePath: member.image || null, sortOrder: memberIndex })) } } });
-      }
-      groups = await prisma.teamGroup.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }], include: { members: { where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] } } });
-    }
+    const groups = await prisma.teamGroup.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }], include: { members: { where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] } } });
     return groups.map((group) => ({ name: group.name, description: group.description, members: group.members.map((member) => ({ name: member.name, role: member.role, description: member.description, image: member.imagePath })) }));
   } catch {
-    return fallbackTeam;
+    return [];
   }
 }
 
 export async function getTestimonials() {
   try {
-    let testimonials = await prisma.testimonial.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
-    if (testimonials.length === 0) {
-      await prisma.testimonial.createMany({ data: fallbackTestimonials.data.map((item, sortOrder) => ({ ...item, sortOrder })) });
-      testimonials = await prisma.testimonial.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
-    }
-    return testimonials;
+    return prisma.testimonial.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
   } catch {
-    return fallbackTestimonials.data;
+    return [];
   }
 }

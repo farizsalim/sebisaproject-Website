@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { fallbackContent } from "@/lib/content/siteContent";
 import { z } from "zod";
 
 const contentPayloadSchema = z.object({
@@ -25,57 +24,6 @@ export async function listContentController() {
   }
 
   try {
-    const quizContent = await prisma.siteContent.findUnique({
-      where: { contentKey: "consultationQuiz" },
-      select: { id: true },
-    });
-
-    if (!quizContent) {
-      await prisma.siteContent.create({
-        data: {
-          contentKey: "consultationQuiz",
-          value: fallbackContent.consultationQuiz,
-          isPublished: true,
-        },
-      });
-    } else {
-      const storedQuiz = await prisma.siteContent.findUnique({
-        where: { contentKey: "consultationQuiz" },
-        select: { id: true, value: true },
-      });
-      if (storedQuiz.value?.flow?.version !== 3) {
-        await prisma.siteContent.update({
-          where: { id: storedQuiz.id },
-          data: { value: fallbackContent.consultationQuiz },
-        });
-      } else if (!storedQuiz.value?.scoringRules) {
-        await prisma.siteContent.update({
-          where: { id: storedQuiz.id },
-          data: {
-            value: {
-              ...storedQuiz.value,
-              scoringRules: fallbackContent.consultationQuiz.scoringRules,
-            },
-          },
-        });
-      }
-    }
-
-    const footerContent = await prisma.siteContent.findUnique({
-      where: { contentKey: "footer" },
-      select: { id: true },
-    });
-
-    if (!footerContent) {
-      await prisma.siteContent.create({
-        data: {
-          contentKey: "footer",
-          value: fallbackContent.footer,
-          isPublished: true,
-        },
-      });
-    }
-
     const content = await prisma.siteContent.findMany({
       where: { contentKey: { not: "services" } },
     });

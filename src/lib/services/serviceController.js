@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import fallbackServices from "../../../public/data/services.json";
 import { z } from "zod";
 
 const serviceSchema = z.object({
@@ -94,7 +93,7 @@ export async function listServicesController() {
 
   try {
     const categories = await findServiceCategories();
-    return Response.json({ services: categories.length > 0 ? serializeCategories(categories) : fallbackServices, isPublished: categories.every((category) => category.isPublished) });
+    return Response.json({ services: serializeCategories(categories), isPublished: categories.every((category) => category.isPublished) });
   } catch (error) {
     console.error("Failed to list services", error);
     return Response.json({ error: "Gagal mengambil data layanan" }, { status: 500 });

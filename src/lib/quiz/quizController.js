@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import quizPlan from "../../../public/data/consultation-quiz-plan.json";
 
 const allowedRoles = ["SUPER_ADMIN", "ADMIN", "EDITOR"];
 const recommendationGroups = [
@@ -97,78 +96,12 @@ async function loadQuiz(where) {
   return quiz ? serializeQuiz(quiz) : null;
 }
 
-async function createQuizFromPlan() {
-  const services = await prisma.service.findMany({ select: { id: true, name: true } });
-  const serviceIds = new Map(services.map((service) => [service.name, service.id]));
-
-  try {
-    return await prisma.$transaction(async (transaction) => {
-    const quiz = await transaction.consultationQuiz.create({
-      data: {
-        slug: quizPlan.slug,
-        title: quizPlan.title,
-        version: quizPlan.version,
-        isPublished: true,
-      },
-    });
-    const nodeIds = new Map();
-
-    for (const node of quizPlan.flow.nodes) {
-      const createdNode = await transaction.consultationQuizNode.create({
-        data: {
-          quizId: quiz.id,
-          type: node.type === "result" ? "RESULT" : "QUESTION",
-          title: node.title,
-          description: node.description || "",
-          positionX: node.position?.x || 0,
-          positionY: node.position?.y || 0,
-        },
-      });
-      nodeIds.set(node.id, createdNode.id);
-    }
-
-    for (const node of quizPlan.flow.nodes.filter((item) => item.type === "question")) {
-      const createdNodeId = nodeIds.get(node.id);
-      for (const [sortOrder, option] of node.options.entries()) {
-        const scores = Object.entries(quizPlan.scoringRules[option.label] || {})
-          .map(([serviceName, score]) => ({ serviceId: serviceIds.get(serviceName), score }))
-          .filter((rule) => rule.serviceId);
-        await transaction.consultationQuizOption.create({
-          data: {
-            nodeId: createdNodeId,
-            label: option.label,
-            sortOrder,
-            targetNodeId: nodeIds.get(option.targetNodeId) || null,
-            scoreRules: { create: scores },
-          },
-        });
-      }
-    }
-
-    await transaction.consultationQuiz.update({
-      where: { id: quiz.id },
-      data: { startNodeId: nodeIds.get(quizPlan.flow.startNodeId) },
-    });
-      return quiz.id;
-    });
-  } catch (error) {
-    if (error?.code !== "P2002") throw error;
-    const existingQuiz = await prisma.consultationQuiz.findUnique({ where: { slug: quizPlan.slug } });
-    if (!existingQuiz) throw error;
-    return existingQuiz.id;
-  }
-}
-
 export async function listQuizController(session) {
   if (!hasQuizAccess(session)) return Response.json({ error: "Tidak memiliki akses" }, { status: 403 });
 
   try {
     let quiz = await loadQuiz({ isPublished: false });
     if (!quiz) quiz = await loadQuiz({ isPublished: true });
-    if (!quiz) {
-      await createQuizFromPlan();
-      quiz = await loadQuiz({ slug: quizPlan.slug });
-    }
     return Response.json({ quiz });
   } catch (error) {
     console.error("Failed to load consultation quiz", error);
@@ -179,10 +112,6 @@ export async function listQuizController(session) {
 export async function getPublishedQuiz() {
   try {
     let quiz = await loadQuiz({ isPublished: true });
-    if (!quiz) {
-      await createQuizFromPlan();
-      quiz = await loadQuiz({ isPublished: true });
-    }
     return quiz;
   } catch {
     return null;

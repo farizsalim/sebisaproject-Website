@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { fallbackContent } from "@/lib/content/siteContent";
 import { prisma } from "@/lib/prisma";
 import { randomUUID } from "node:crypto";
 import { removePortfolioMedia, savePortfolioMedia } from "@/lib/media/portfolioUpload";
@@ -84,31 +83,9 @@ async function listProjects() {
   });
 }
 
-async function seedProjectsIfEmpty() {
-  if (await prisma.portfolioProject.count() > 0) return;
-  for (const [sortOrder, item] of fallbackContent.caseStudies.entries()) {
-    const normalized = normalizeCaseStudy(item);
-    await prisma.portfolioProject.create({
-      data: {
-        id: normalized.id || randomUUID(),
-        clientName: normalized.clientName,
-        title: normalized.title,
-        slug: slugify(item.id || normalized.clientName),
-        category: normalized.category,
-        description: normalized.description,
-        result: normalized.result,
-        instagram: normalized.instagram,
-        sortOrder,
-        media: { create: normalized.media.map((media, mediaOrder) => ({ ...media, sortOrder: mediaOrder, originalName: media.filePath.split("/").pop() || "" })) },
-      },
-    });
-  }
-}
-
 export async function listCaseStudiesController() {
   if (!await requireContentAccess()) return Response.json({ error: "Tidak memiliki akses" }, { status: 403 });
   try {
-    await seedProjectsIfEmpty();
     return Response.json({ caseStudies: (await listProjects()).map(toCaseStudy) });
   } catch (error) {
     console.error("Failed to list case studies", error);
