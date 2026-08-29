@@ -60,7 +60,7 @@ export default function IntroVideoSection() {
               onPlay={() => setIsPlaying(true)}
               preload="metadata"
               playsInline
-              src="/data/perkenalan/perkenalan.mp4"
+              src="/perkenalan.mp4"
             >
               Browser Anda tidak mendukung pemutaran video.
             </video>

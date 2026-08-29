@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { FaArrowRight, FaUsers } from "react-icons/fa6";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const TEAM_IMAGE_VERSION = "20260811";
 
@@ -18,23 +18,9 @@ function getInitials(name) {
     .toUpperCase();
 }
 
-export default function AboutSection({ content }) {
+export default function AboutSection({ content, teams = [] }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [teamPreview, setTeamPreview] = useState([]);
-
-  useEffect(() => {
-    const loadTeamPreview = async () => {
-      try {
-        const response = await fetch("/data/team.json");
-        const teams = await response.json();
-        setTeamPreview(teams.flatMap((team) => team.members));
-      } catch {
-        setTeamPreview([]);
-      }
-    };
-
-    loadTeamPreview();
-  }, []);
+  const teamPreview = teams.flatMap((team) => team.members || []);
 
   return (
     <section

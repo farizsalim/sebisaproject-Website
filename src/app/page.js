@@ -47,7 +47,7 @@ export default async function Home() {
       <CaseStudySection caseStudies={caseStudies} />
       <BehindScenesSection behindScenes={behindScenes} />
       <TestimonialsSection testimonials={testimonials} />
-      <AboutSection content={content.about} />
+      <AboutSection content={content.about} teams={teams} />
       <FaqSection content={content.faq} />
       <FinalCtaSection content={content.finalCta} />
       <Footer content={content.footer} />
