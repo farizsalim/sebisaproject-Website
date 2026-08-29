@@ -5,7 +5,15 @@ import { FaArrowLeft, FaCheck, FaComments, FaLightbulb, FaListCheck, FaXmark } f
 import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 
-const WHATSAPP_NUMBER = "6280000000000";
+const FALLBACK_WHATSAPP_NUMBER = "6280000000000";
+
+function getWhatsAppNumber(value) {
+  const source = value || FALLBACK_WHATSAPP_NUMBER;
+  const path = source.match(/wa\.me\/([^?#/]+)/i)?.[1] || source;
+  const digits = path.replace(/\D/g, "");
+  if (!digits) return FALLBACK_WHATSAPP_NUMBER;
+  return digits.startsWith("0") ? `62${digits.slice(1)}` : digits;
+}
 
 const fallbackQuizContent = {
   eyebrow: "Konsultasi singkat",
@@ -103,7 +111,7 @@ function calculateRecommendations(answers, quizContent) {
     : quizContent.defaultRecommendations || fallbackQuizContent.defaultRecommendations;
 }
 
-function ConsultationModal({ content, onClose }) {
+function ConsultationModal({ content, whatsappUrl, onClose }) {
   const quizContent = content || fallbackQuizContent;
   const consultationQuestions = quizContent.questions || fallbackQuizContent.questions;
   const flowNodes = quizContent.flow?.nodes || [];
@@ -117,6 +125,7 @@ function ConsultationModal({ content, onClose }) {
   const [stage, setStage] = useState("questions");
   const [contact, setContact] = useState({ name: "", whatsapp: "", business: "" });
   const [flowRecommendations, setFlowRecommendations] = useState([]);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     const handleEscape = (event) => {
@@ -190,23 +199,38 @@ function ConsultationModal({ content, onClose }) {
 
   const submitContact = async (event) => {
     event.preventDefault();
-    const response = await fetch("/api/consultation", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...contact, answers, recommendations, quizId: quizContent.id, quizVersion: quizContent.version }),
-    });
+    setSubmitError("");
+    const normalizedWhatsapp = contact.whatsapp.trim().replace(/[\s-]/g, "");
+    if (!/^\+?[0-9]{10,20}$/.test(normalizedWhatsapp)) {
+      setSubmitError("Nomor WhatsApp harus berisi 10-20 digit angka, contoh: 08123456789.");
+      return;
+    }
 
-    if (!response.ok) return;
+    try {
+      const response = await fetch("/api/consultation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...contact, whatsapp: normalizedWhatsapp, answers, recommendations, quizId: quizContent.id, quizVersion: quizContent.version }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setSubmitError(result.error || "Data konsultasi belum dapat dikirim. Periksa kembali isianmu.");
+        return;
+      }
+    } catch {
+      setSubmitError("Koneksi gagal. Periksa internet lalu coba lagi.");
+      return;
+    }
 
     const message = [
       "Halo Sebisa Project, saya ingin melihat rekomendasi konsultasi.",
       `Nama: ${contact.name}`,
       `Bisnis/brand: ${contact.business}`,
-      `WhatsApp: ${contact.whatsapp}`,
+      `WhatsApp: ${normalizedWhatsapp}`,
       `Jawaban: ${answers.join(" | ")}`,
       `Rekomendasi: ${recommendations.join(", ")}`,
     ].join("\n");
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/${getWhatsAppNumber(whatsappUrl)}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
     onClose();
   };
 
@@ -262,6 +286,7 @@ function ConsultationModal({ content, onClose }) {
             <div className="mt-6 grid gap-4">
               {[['name', 'Nama lengkap', 'Masukkan nama kamu'], ['business', 'Nama bisnis atau brand', 'Contoh: Sebisa Coffee'], ['whatsapp', 'Nomor WhatsApp', 'Contoh: 08123456789']].map(([field, label, placeholder]) => <label className="grid gap-2 text-sm font-bold" key={field}>{label}<input required value={contact[field]} onChange={(event) => setContact({ ...contact, [field]: event.target.value })} className="rounded-xl border border-deep-navy/15 bg-white px-4 py-3 font-normal outline-none transition focus:border-brand-blue" placeholder={placeholder} type={field === 'whatsapp' ? 'tel' : 'text'} /></label>)}
             </div>
+            {submitError ? <p className="mt-4 rounded-xl bg-hot-pink/10 px-4 py-3 text-sm font-bold text-deep-navy" role="alert">{submitError}</p> : null}
             <button className="mt-7 w-full rounded-full bg-orange px-5 py-4 text-sm font-black uppercase tracking-[0.06em] text-deep-navy transition hover:-translate-y-0.5 hover:bg-brand-blue hover:text-white" type="submit">Lanjut ke WhatsApp</button>
           </form>
         ) : null}
@@ -329,7 +354,7 @@ function ConsultationStep({ step, index }) {
   );
 }
 
-export default function ConsultationSection({ content }) {
+export default function ConsultationSection({ content, whatsappUrl }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -404,7 +429,7 @@ export default function ConsultationSection({ content }) {
           </motion.button>
         </motion.div>
       </div>
-      {isModalOpen ? <ConsultationModal content={content} onClose={() => setIsModalOpen(false)} /> : null}
+      {isModalOpen ? <ConsultationModal content={content} whatsappUrl={whatsappUrl} onClose={() => setIsModalOpen(false)} /> : null}
     </section>
   );
 }

@@ -41,7 +41,7 @@ export default async function Home() {
       <Navbar content={content.navbar} />
       <Hero content={content.hero} />
       <IntroVideoSection />
-      <ConsultationSection content={quiz} />
+      <ConsultationSection content={quiz} whatsappUrl={content.footer?.socialLinks?.whatsapp} />
       <ServicesSection content={services} />
       <ClientsSection content={content.clients} clients={clients} />
       <CaseStudySection caseStudies={caseStudies} />
