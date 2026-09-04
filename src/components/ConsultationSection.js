@@ -6,6 +6,11 @@ import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 
 const FALLBACK_WHATSAPP_NUMBER = "6280000000000";
+const recommendationServiceNames = {
+  "Konten & Social Media": ["Paket Starter", "Paket Kreator", "Paket Pro", "Paket Elite", "Social Media Jalan Terus", "Paket Konten Terima Beres", "Edit Set A", "Edit Set B", "Paket Sosmed"],
+  "Desain & Branding": ["Design Graphic Set A", "Design Graphic Set B", "Design Sosmed", "Design"],
+  "Website & Landing Page": ["Paket Landing Page", "Paket Website"],
+};
 
 function getWhatsAppNumber(value) {
   const source = value || FALLBACK_WHATSAPP_NUMBER;
@@ -111,7 +116,7 @@ function calculateRecommendations(answers, quizContent) {
     : quizContent.defaultRecommendations || fallbackQuizContent.defaultRecommendations;
 }
 
-function ConsultationModal({ content, whatsappUrl, onClose }) {
+function ConsultationModal({ content, services, whatsappUrl, onViewServices, onClose }) {
   const quizContent = content || fallbackQuizContent;
   const consultationQuestions = quizContent.questions || fallbackQuizContent.questions;
   const flowNodes = quizContent.flow?.nodes || [];
@@ -178,6 +183,7 @@ function ConsultationModal({ content, whatsappUrl, onClose }) {
   };
 
   const recommendations = flowRecommendations.length > 0 ? flowRecommendations : calculateRecommendations(answers, quizContent);
+  const recommendedServices = getRecommendedServices(recommendations, services);
 
   const goBack = () => {
     if (isFlowQuiz) {
@@ -274,7 +280,8 @@ function ConsultationModal({ content, whatsappUrl, onClose }) {
             <h2 id="consultation-modal-title" className="mt-3 text-2xl font-black sm:text-4xl">Arah yang mungkin cocok untukmu</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">Kami menemukan beberapa layanan yang bisa menjadi langkah awal. Detail rekomendasi akan kami jelaskan setelah data kontak terisi.</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">{recommendations.map((recommendation) => <div className="rounded-xl border-l-4 border-orange bg-white px-4 py-4" key={recommendation}><p className="text-sm font-black">{recommendation}</p><p className="mt-2 text-xs font-normal leading-5 text-slate-600">{quizContent.recommendationDescriptions?.[recommendation] || "Rekomendasi berdasarkan jawaban konsultasi kamu."}</p></div>)}</div>
-            <button className="mt-8 w-full rounded-full bg-orange px-6 py-3 text-sm font-black uppercase tracking-[0.06em] text-deep-navy transition hover:-translate-y-0.5 hover:bg-brand-blue hover:text-white sm:w-auto" type="button" onClick={() => setStage("contact")}>Lihat rekomendasi lengkap</button>
+            {recommendedServices.length ? <div className="mt-5 grid gap-3 sm:grid-cols-2">{recommendedServices.map((service) => <article className="rounded-xl border border-deep-navy/10 bg-white p-4" key={service.name}><p className="text-sm font-black text-deep-navy">{service.name}</p><p className="mt-1 text-xs font-bold text-brand-blue">{service.price}{service.duration ? ` · ${service.duration}` : ""}</p><p className="mt-2 text-xs leading-5 text-slate-600">{service.description}</p></article>)}</div> : null}
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row"><button className="w-full rounded-full bg-brand-blue px-6 py-3 text-sm font-black uppercase tracking-[0.06em] text-white transition hover:bg-deep-navy sm:w-auto" type="button" onClick={() => onViewServices(recommendedServices)}>Lihat layanan</button><button className="w-full rounded-full bg-orange px-6 py-3 text-sm font-black uppercase tracking-[0.06em] text-deep-navy transition hover:bg-brand-blue hover:text-white sm:w-auto" type="button" onClick={() => setStage("contact")}>Lanjut ke WhatsApp</button></div>
           </>
         ) : null}
 
@@ -354,8 +361,18 @@ function ConsultationStep({ step, index }) {
   );
 }
 
-export default function ConsultationSection({ content, whatsappUrl }) {
+export default function ConsultationSection({ content, services, whatsappUrl }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  function viewRecommendedServices(recommendedServices) {
+    const serviceNames = recommendedServices.map((service) => service.name);
+    const url = new URL(window.location.href);
+    url.searchParams.set("serviceFilter", serviceNames.join("|"));
+    window.history.pushState({}, "", url);
+    window.dispatchEvent(new CustomEvent("service-filter-change", { detail: serviceNames }));
+    setIsModalOpen(false);
+    window.setTimeout(() => document.getElementById("layanan-katalog")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  }
 
   return (
     <section
@@ -429,7 +446,12 @@ export default function ConsultationSection({ content, whatsappUrl }) {
           </motion.button>
         </motion.div>
       </div>
-      {isModalOpen ? <ConsultationModal content={content} whatsappUrl={whatsappUrl} onClose={() => setIsModalOpen(false)} /> : null}
+      {isModalOpen ? <ConsultationModal content={content} services={services} whatsappUrl={whatsappUrl} onViewServices={viewRecommendedServices} onClose={() => setIsModalOpen(false)} /> : null}
     </section>
   );
+}
+
+function getRecommendedServices(recommendations, serviceGroups) {
+  const names = new Set(recommendations.flatMap((recommendation) => recommendationServiceNames[recommendation] || []));
+  return (serviceGroups || []).flatMap((group) => (group.services || []).map((service) => ({ ...service, category: group.category }))).filter((service) => names.has(service.name));
 }

@@ -119,7 +119,7 @@ export default function Navbar({ content }) {
       <div className="overflow-hidden bg-[var(--brand-orange)] text-white">
         <div className="container mx-auto flex min-h-11 items-center gap-3 px-4 text-[11px] font-black uppercase tracking-[0.08em] sm:px-6 lg:px-8 xl:px-12">
           <Link className="shrink-0 bg-white px-2 py-1 text-[10px] tracking-[0.12em] text-[var(--brand-orange)] transition hover:bg-[var(--foreground)] hover:text-white" href="/?filter=flash-sale#layanan">
-            {navbarContent.flashSale}
+            Limited Project Slots
           </Link>
           <div className="min-w-0 flex-1 overflow-hidden whitespace-nowrap">
             <div className="flex w-max animate-[ticker_24s_linear_infinite] gap-12 hover:[animation-play-state:paused]">

@@ -18,7 +18,7 @@ export const fallbackContent = {
   navbar: {
     links: ["Beranda", "Tentang Kami", "Layanan", "Mitra", "Kisah", "Our Teams"],
     consultationCta: "Mulai Konsultasi",
-    flashSale: "Flash Sale",
+    flashSale: "Limited Project Slots",
     tickerItems: [
       "Gratis konsultasi awal untuk ide bisnis kamu",
       "Bangun brand yang siap melangkah lebih jauh",
@@ -335,7 +335,7 @@ export async function getTeams() {
 
 export async function getTestimonials() {
   try {
-    return prisma.testimonial.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
+    return await prisma.testimonial.findMany({ where: { isPublished: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
   } catch {
     return [];
   }

@@ -21,6 +21,7 @@ function getInitials(name) {
 export default function AboutSection({ content, teams = [] }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const teamPreview = teams.flatMap((team) => team.members || []);
+  const visibleTeamMembers = teamPreview.slice(0, 8);
 
   return (
     <section
@@ -92,18 +93,33 @@ export default function AboutSection({ content, teams = [] }) {
           </div>
         </motion.div>
       </div>
-      {teamPreview.length > 0 ? (
+      {visibleTeamMembers.length > 0 ? (
         <div className="relative z-10 mx-auto mt-14 max-w-[1240px] overflow-hidden border-y border-white/20 py-7 sm:mt-20">
-          <p className="mb-5 text-center text-xs font-black uppercase tracking-[0.22em] text-white/70">
-            Orang-orang di balik Sebisa Project
-          </p>
+          <div className="mb-5 flex flex-col gap-2 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-white/70">
+                Orang-orang di balik Sebisa Project
+              </p>
+              <p className="mt-1 text-sm text-white/55">
+                Kenali peran yang membuat setiap project bergerak.
+              </p>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.16em] text-orange">
+              {teamPreview.length} anggota · geser untuk menjelajah
+            </span>
+          </div>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[var(--brand-deep-navy)] to-transparent sm:w-28" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[var(--brand-deep-navy)] to-transparent sm:w-28" />
             <div className="about-team-marquee flex w-max gap-5 hover:[animation-play-state:paused] sm:gap-7">
-              {[...teamPreview, ...teamPreview].map((member, index) => (
-                <div className="w-[168px] shrink-0 sm:w-[232px]" key={`${member.name}-${index}`}>
-                  <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-xl border border-white/15 bg-brand-surface-alt sm:h-56 sm:w-56">
+              {[...visibleTeamMembers, ...visibleTeamMembers].map((member, index) => (
+                <article
+                  className="team-stroke-card group relative w-[168px] shrink-0 overflow-visible rounded-xl border-[5px] border-brand-panel bg-deep-navy/50 transition-[border-color] duration-200 hover:border-transparent focus:border-transparent sm:w-[232px]"
+                  key={`${member.name}-${index}`}
+                  tabIndex="0"
+                  aria-label={`${member.name}, ${member.role}`}
+                >
+                  <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-[calc(0.75rem-5px)] bg-brand-surface-alt sm:h-56 sm:w-56">
                     {member.image ? (
                       <Image
                         src={`${member.image}?v=${TEAM_IMAGE_VERSION}`}
@@ -118,7 +134,20 @@ export default function AboutSection({ content, teams = [] }) {
                       </div>
                     )}
                   </div>
-                </div>
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep-navy via-deep-navy/90 to-transparent px-3 pb-3 pt-12 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus:opacity-100 sm:px-4 sm:pb-4">
+                    <p className="text-[9px] font-black uppercase tracking-[0.14em] text-orange">
+                      {member.role}
+                    </p>
+                    <h3 className="mt-1 truncate text-sm font-black sm:text-base">
+                      {member.name}
+                    </h3>
+                    {member.description ? (
+                      <p className="mt-1 line-clamp-2 text-[10px] leading-4 text-white/70 sm:text-xs">
+                        {member.description}
+                      </p>
+                    ) : null}
+                  </div>
+                </article>
               ))}
             </div>
           </div>
@@ -130,7 +159,7 @@ export default function AboutSection({ content, teams = [] }) {
           href="/tim"
         >
           <FaUsers aria-hidden="true" />
-          Kenali lebih dekat
+          Kenali tim kami lebih dekat
           <FaArrowRight className="ml-auto text-brand-blue" aria-hidden="true" />
         </Link>
       </div>
