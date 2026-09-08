@@ -2,15 +2,23 @@
 
 import { motion } from "motion/react";
 import { useRef } from "react";
-import { FaArrowLeft, FaArrowRight, FaStar } from "react-icons/fa6";
+import { FaArrowLeft, FaArrowRight, FaStar, FaStarHalfStroke } from "react-icons/fa6";
 
 function Rating({ value }) {
+  const rating = Number(value) || 0;
+
   return (
-    <div className="flex items-center gap-1 text-orange" aria-label={`Rating ${value} dari 5`}>
+    <div className="flex items-center gap-1 text-orange" aria-label={`Rating ${rating} dari 5`}>
       {[1, 2, 3, 4, 5].map((star) => (
-        <FaStar key={star} className={star <= Math.round(value) ? "" : "opacity-25"} aria-hidden="true" />
+        star <= rating ? (
+          <FaStar key={star} aria-hidden="true" />
+        ) : star - rating === 0.5 ? (
+          <FaStarHalfStroke key={star} aria-hidden="true" />
+        ) : (
+          <FaStar key={star} className="opacity-25" aria-hidden="true" />
+        )
       ))}
-      <span className="ml-1 text-xs font-black text-white/60">{value}/5</span>
+      <span className="ml-1 text-xs font-black text-white/60">{rating}/5</span>
     </div>
   );
 }

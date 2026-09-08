@@ -2,6 +2,20 @@
 
 import { usePathname } from "next/navigation";
 
+export function scrollToAnchor(targetId) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+
+  const navbar = document.querySelector("nav");
+  const navbarHeight = navbar?.getBoundingClientRect().height || 0;
+  const targetTop = target.getBoundingClientRect().top + window.scrollY;
+
+  window.scrollTo({
+    top: Math.max(0, targetTop - navbarHeight - 16),
+    behavior: "smooth",
+  });
+}
+
 export default function ScrollLink({ href, className, children, onClick }) {
   const pathname = usePathname();
 
@@ -20,10 +34,7 @@ export default function ScrollLink({ href, className, children, onClick }) {
       return;
     }
 
-    document.getElementById(targetId)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    scrollToAnchor(targetId);
   };
 
   return (

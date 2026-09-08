@@ -21,7 +21,7 @@ function getInitials(name) {
 export default function AboutSection({ content, teams = [] }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const teamPreview = teams.flatMap((team) => team.members || []);
-  const visibleTeamMembers = teamPreview.slice(0, 8);
+  const visibleTeamMembers = teamPreview;
 
   return (
     <section

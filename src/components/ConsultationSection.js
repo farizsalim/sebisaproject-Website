@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { FaArrowLeft, FaCheck, FaComments, FaLightbulb, FaListCheck, FaXmark } from "react-icons/fa6";
 import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
+import { scrollToAnchor } from "@/components/ScrollLink";
 
 const FALLBACK_WHATSAPP_NUMBER = "6280000000000";
 const recommendationServiceNames = {
@@ -371,7 +372,7 @@ export default function ConsultationSection({ content, services, whatsappUrl }) 
     window.history.pushState({}, "", url);
     window.dispatchEvent(new CustomEvent("service-filter-change", { detail: serviceNames }));
     setIsModalOpen(false);
-    window.setTimeout(() => document.getElementById("layanan-katalog")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+    window.setTimeout(() => scrollToAnchor("layanan-katalog"), 0);
   }
 
   return (

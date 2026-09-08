@@ -75,7 +75,7 @@
 }
 
 .about-team-marquee {
-  animation: about-team-marquee 34s linear infinite;
+  animation: about-team-marquee 80s linear infinite;
 }
 
 .clients-marquee {
@@ -88,6 +88,13 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 148px;
+}
+
+@media (max-width: 639px) {
+  html {
+    scroll-padding-top: 132px;
+  }
 }
 
 :root {

@@ -129,6 +129,10 @@ export default function CaseStudySection({ caseStudies: initialCaseStudies = [] 
           <p className="py-16 text-orange">{error}</p>
         ) : activeCase ? (
           <>
+          <div className="mb-3 flex items-center justify-between rounded-full border border-deep-navy/10 bg-brand-surface px-3 py-2 text-[9px] font-black uppercase tracking-[0.12em] text-deep-navy/55 sm:hidden">
+            <span className="flex items-center gap-2"><FaArrowLeft className="text-orange" aria-hidden="true" /> Geser untuk melihat karya lain</span>
+            <FaArrowRight className="text-orange" aria-hidden="true" />
+          </div>
           <div className="container relative mx-auto flex min-h-[430px] justify-center overflow-hidden px-4 sm:min-h-[400px] lg:min-h-[400px] lg:px-8">
               <button
                 aria-label="Studi kasus sebelumnya"
@@ -151,7 +155,7 @@ export default function CaseStudySection({ caseStudies: initialCaseStudies = [] 
                 <FaArrowRight aria-hidden="true" />
               </button>
             <motion.div
-                className="relative flex w-max items-start gap-4 py-2 [--card-width:calc(100vw-2rem)] sm:[--card-width:600px]"
+              className="relative flex w-max items-start gap-4 py-2 [--card-width:calc(100vw-3.5rem)] sm:[--card-width:600px]"
               animate={{ x: 0 }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
               drag="x"
@@ -167,7 +171,7 @@ export default function CaseStudySection({ caseStudies: initialCaseStudies = [] 
                   <motion.div
                     key={`${caseStudy.id}-${index}`}
                     data-case-study-card={isActive ? "active" : "inactive"}
-                    className={`relative w-[calc(100vw-2rem)] shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-deep-navy/95 p-2 backdrop-blur-sm transition-shadow sm:w-[600px] sm:p-3 ${isActive ? "z-10 border-brand-blue shadow-[0_20px_45px_rgb(0_0_0_/_28%)]" : "shadow-none"}`}
+                    className={`relative w-[calc(100vw-3.5rem)] shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-deep-navy/95 p-2 backdrop-blur-sm transition-shadow sm:w-[600px] sm:p-3 ${isActive ? "z-10 border-brand-blue shadow-[0_20px_45px_rgb(0_0_0_/_28%)]" : "shadow-none"}`}
                     initial={isActive ? { opacity: 0, x: slideDirection * 54 } : false}
                     animate={{ x: 0, scale: 1, opacity: 1 }}
                     transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
@@ -239,7 +243,7 @@ export default function CaseStudySection({ caseStudies: initialCaseStudies = [] 
             <div className="relative mt-1 flex flex-col items-center gap-3 border-t border-white/15 px-1 pt-3 sm:flex-row sm:justify-between sm:px-2 sm:pt-4">
               {caseStudy.instagram ? (
                 <a
-                  className="inline-flex items-center gap-2 self-start text-[10px] font-black uppercase tracking-[0.1em] text-brand-blue-light transition hover:text-orange sm:text-xs"
+                  className="inline-flex items-center gap-2 self-start text-[10px] font-black uppercase tracking-[0.1em] text-orange transition hover:text-white sm:text-xs"
                   href={caseStudy.instagram}
                   target="_blank"
                   rel="noreferrer"
